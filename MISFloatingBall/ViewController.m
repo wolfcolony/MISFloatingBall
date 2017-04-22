@@ -21,14 +21,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    
-    self.view.backgroundColor = [UIColor redColor];
-    NSUserDefaults *user = [NSUserDefaults standardUserDefaults];
-    
-    NSUserDefaults *user1 = [[NSUserDefaults alloc] init];
-    
-    NSLog(@"user = %@, user1 = %@", user, user1);
-    
     self.button = [[UIButton alloc] initWithFrame:CGRectMake(100, 300, 100, 100)];
     [self.button setTitle:@"我是底部控制器的按钮" forState:UIControlStateNormal];
     self.button.backgroundColor = [UIColor blueColor];
@@ -45,6 +37,11 @@
     
     [self.testView addGestureRecognizer:self.pan];
     [self.testView addGestureRecognizer:self.tap];
+}
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [super touchesBegan:touches withEvent:event];
+    NSLog(@"touch");
 }
 
 - (void)pan:(UIPanGestureRecognizer *)pan {
