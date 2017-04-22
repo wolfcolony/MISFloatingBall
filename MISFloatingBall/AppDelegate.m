@@ -18,10 +18,8 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
-    
-//    self.floatinBall = [[MISFloatingBall alloc] init];
     self.floatinBall = [[MISFloatingBall alloc] initFloatingBallWithSize:CGSizeMake(60, 60) originPosition:MISFloatingBallOriginPositionRight];
+//    self.floatinBall.autoRetract = YES;
     [self.floatinBall show];
     
     return YES;

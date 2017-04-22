@@ -54,6 +54,8 @@
     return self;
 }
 
+#pragma mark - Private
+
 - (void)initialize {
     self.layer.cornerRadius = 10.f;
     self.windowLevel = UIWindowLevelAlert + 100;
@@ -66,7 +68,7 @@
     self.hOffset = self.bounds.size.height * 0.4;
     self.centerOffset = CGPointMake(MISSCREENW * 0.6, MISSCREENH * 0.6);
     
-    self.retractDuration = 3.0f;
+    self.retractDuration = 5.0f;
     self.autoRetract = NO;
 }
 
@@ -78,6 +80,36 @@
     [self addGestureRecognizer:panGesture];
 }
 
+- (void)autoRetract {
+    [UIView animateWithDuration:0.5f animations:^{
+        CGRect frame = self.frame;
+        switch (self.originPosition) {
+            case MISFloatingBallOriginPositionTop: {
+                frame.origin.y = -self.hOffset;
+                self.frame = frame;
+                break;
+            }
+            case MISFloatingBallOriginPositionBottom: {
+                frame.origin.y = MISSCREENH - self.bounds.size.height + self.hOffset;
+                self.frame = frame;
+                break;
+            }
+            case MISFloatingBallOriginPositionLeft: {
+                frame.origin.x = -self.wOffset;
+                self.frame = frame;
+                break;
+            }
+            case MISFloatingBallOriginPositionRight: {
+                frame.origin.x = MISSCREENW - self.bounds.size.width + self.wOffset;
+                self.frame = frame;
+                break;
+            }
+            default:
+                break;
+        }
+    }];
+}
+
 #pragma mark - Public Methods
 
 - (void)show {
@@ -87,47 +119,34 @@
 #pragma mark - GestureRecognizer
 
 - (void)panGestureRecognizer:(UIPanGestureRecognizer *)panGesture {
-    if (UIGestureRecognizerStateChanged == panGesture.state) {
-        CGPoint translation = [panGesture translationInView:self];
-        CGPoint center = self.center;
+    if (UIGestureRecognizerStateBegan == panGesture.state) {
         
+    }
+    else if (UIGestureRecognizerStateChanged == panGesture.state) {
+        CGPoint translation = [panGesture translationInView:self];
+        
+        CGPoint center = self.center;
         center.x += translation.x;
         center.y += translation.y;
-        
-        if (center.x < 0) {
-            center.x = 0;
-        }
-        
-        if (center.x > [UIScreen mainScreen].bounds.size.width) {
-            center.x = [UIScreen mainScreen].bounds.size.width;
-        }
-        
-        if (center.y < 0) {
-            center.y = 0;
-        }
-        
-        if (center.y > [UIScreen mainScreen].bounds.size.height) {
-            center.y = [UIScreen mainScreen].bounds.size.height;
-        }
-        
         self.center = center;
         
+        CGFloat  rightMaxX = MISSCREENW - self.bounds.size.width + self.wOffset;
+        CGFloat   leftMinX = -self.wOffset;
+        CGFloat bottomMaxY = MISSCREENH - self.bounds.size.height + self.hOffset;
+        CGFloat    topMinY = -self.hOffset;
+        
+        CGRect frame = self.frame;
+        frame.origin.x = frame.origin.x > rightMaxX ? rightMaxX : frame.origin.x;
+        frame.origin.x = frame.origin.x < leftMinX ? leftMinX : frame.origin.x;
+        frame.origin.y = frame.origin.y > bottomMaxY ? bottomMaxY : frame.origin.y;
+        frame.origin.y = frame.origin.y < topMinY ? topMinY : frame.origin.y;
+        self.frame = frame;
+        
+        // zero
         [panGesture setTranslation:CGPointZero inView:self];
     }
     else if (UIGestureRecognizerStateEnded == panGesture.state) {
-        __block
-        CGPoint center = self.center;
         
-        if (center.x < self.bounds.size.width * 0.5) {
-            center.x = self.bounds.size.width * 0.5;
-        }
-        
-        if (center.x > [UIScreen mainScreen].bounds.size.width - self.bounds.size.width * 0.5) {
-            [UIView animateWithDuration:0.3f animations:^{
-                center.x = [UIScreen mainScreen].bounds.size.width - self.bounds.size.width * 0.5;
-                self.center = center;
-            }];
-        }
     }
 }
 
@@ -139,6 +158,14 @@
 
 - (void)setBallSize:(CGSize)ballSize {
     _ballSize = ballSize;
+}
+
+- (void)setAutoRetract:(BOOL)autoRetract {
+    _autoRetract = autoRetract;
+    
+    if (autoRetract) {
+        [self performSelector:@selector(autoRetract) withObject:nil afterDelay:self.retractDuration];
+    }
 }
 
 - (void)setOriginPosition:(MISFloatingBallOriginPosition)originPosition {

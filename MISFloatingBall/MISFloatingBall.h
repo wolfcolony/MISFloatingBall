@@ -22,7 +22,7 @@ typedef NS_ENUM(NSUInteger, MISFloatingBallOriginPosition) {
 - (instancetype)initFloatingBallWithSize:(CGSize)ballSize
                           originPosition:(MISFloatingBallOriginPosition)originPosition;
 
-/**< 自动缩进一部分的间隔 (默认为 3S)*/
+/**< 自动缩进一部分的间隔 (默认为 5S)*/
 @property (nonatomic, assign) CGFloat retractDuration;
 /**< 是否隔一段时间后自动缩进 (默认不缩进)*/
 @property (nonatomic, assign, getter=isAutoRetract) BOOL autoRetract;
