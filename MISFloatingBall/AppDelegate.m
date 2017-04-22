@@ -7,8 +7,10 @@
 //
 
 #import "AppDelegate.h"
+#import "MISFloatingBall.h"
 
 @interface AppDelegate ()
+@property (nonatomic, strong) MISFloatingBall *floatinBall;
 
 @end
 
@@ -17,6 +19,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    self.floatinBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(100, 100, 100, 100)];
+    [self.floatinBall show];
+    
     return YES;
 }
 

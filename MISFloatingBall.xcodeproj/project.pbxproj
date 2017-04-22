@@ -61,8 +61,7 @@
 		C4E87DCD1EAB24520098F645 /* MISFloatingBall */ = {
 			isa = PBXGroup;
 			children = (
-				C4E87DE51EAB2BA50098F645 /* MISFloatingBall.h */,
-				C4E87DE61EAB2BA50098F645 /* MISFloatingBall.m */,
+				C4E87DF21EAB381C0098F645 /* resources */,
 				C4E87DD11EAB24520098F645 /* AppDelegate.h */,
 				C4E87DD21EAB24520098F645 /* AppDelegate.m */,
 				C4E87DD41EAB24520098F645 /* ViewController.h */,
@@ -82,6 +81,15 @@
 				C4E87DCF1EAB24520098F645 /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		C4E87DF21EAB381C0098F645 /* resources */ = {
+			isa = PBXGroup;
+			children = (
+				C4E87DE51EAB2BA50098F645 /* MISFloatingBall.h */,
+				C4E87DE61EAB2BA50098F645 /* MISFloatingBall.m */,
+			);
+			name = resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -115,6 +123,7 @@
 				TargetAttributes = {
 					C4E87DCA1EAB24520098F645 = {
 						CreatedOnToolsVersion = 8.3;
+						DevelopmentTeam = SW9TH7TPPT;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -280,9 +289,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = SW9TH7TPPT;
 				INFOPLIST_FILE = MISFloatingBall/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = chengpeng.MISFloatingBall;
+				PRODUCT_BUNDLE_IDENTIFIER = com.chengpeng;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -291,9 +301,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = SW9TH7TPPT;
 				INFOPLIST_FILE = MISFloatingBall/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = chengpeng.MISFloatingBall;
+				PRODUCT_BUNDLE_IDENTIFIER = com.chengpeng;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

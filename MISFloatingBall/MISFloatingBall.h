@@ -10,4 +10,5 @@
 
 @interface MISFloatingBall : UIWindow
 
+- (void)show;
 @end
