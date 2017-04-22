@@ -13,6 +13,7 @@
 		C4E87DD91EAB24520098F645 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C4E87DD71EAB24520098F645 /* Main.storyboard */; };
 		C4E87DDB1EAB24520098F645 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C4E87DDA1EAB24520098F645 /* Assets.xcassets */; };
 		C4E87DDE1EAB24520098F645 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C4E87DDC1EAB24520098F645 /* LaunchScreen.storyboard */; };
+		C4E87DE71EAB2BA50098F645 /* MISFloatingBall.m in Sources */ = {isa = PBXBuildFile; fileRef = C4E87DE61EAB2BA50098F645 /* MISFloatingBall.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,8 @@
 		C4E87DDA1EAB24520098F645 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C4E87DDD1EAB24520098F645 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C4E87DDF1EAB24520098F645 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C4E87DE51EAB2BA50098F645 /* MISFloatingBall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MISFloatingBall.h; sourceTree = "<group>"; };
+		C4E87DE61EAB2BA50098F645 /* MISFloatingBall.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MISFloatingBall.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +61,8 @@
 		C4E87DCD1EAB24520098F645 /* MISFloatingBall */ = {
 			isa = PBXGroup;
 			children = (
+				C4E87DE51EAB2BA50098F645 /* MISFloatingBall.h */,
+				C4E87DE61EAB2BA50098F645 /* MISFloatingBall.m */,
 				C4E87DD11EAB24520098F645 /* AppDelegate.h */,
 				C4E87DD21EAB24520098F645 /* AppDelegate.m */,
 				C4E87DD41EAB24520098F645 /* ViewController.h */,
@@ -150,6 +155,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C4E87DE71EAB2BA50098F645 /* MISFloatingBall.m in Sources */,
 				C4E87DD61EAB24520098F645 /* ViewController.m in Sources */,
 				C4E87DD31EAB24520098F645 /* AppDelegate.m in Sources */,
 				C4E87DD01EAB24520098F645 /* main.m in Sources */,
@@ -311,6 +317,7 @@
 				C4E87DE41EAB24520098F645 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
