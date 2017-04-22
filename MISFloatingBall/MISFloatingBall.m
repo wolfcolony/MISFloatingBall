@@ -65,6 +65,9 @@
     self.wOffset = self.bounds.size.width * 0.4;
     self.hOffset = self.bounds.size.height * 0.4;
     self.centerOffset = CGPointMake(MISSCREENW * 0.6, MISSCREENH * 0.6);
+    
+    self.retractDuration = 3.0f;
+    self.autoRetract = NO;
 }
 
 - (void)addGestureRecognizer {
