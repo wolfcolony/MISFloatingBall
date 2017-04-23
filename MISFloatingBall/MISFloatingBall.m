@@ -64,8 +64,8 @@
     self.containerVC.view.backgroundColor = [UIColor redColor];
     self.rootViewController = self.containerVC;
     
-    self.wOffset = self.bounds.size.width * 0.4;
-    self.hOffset = self.bounds.size.height * 0.4;
+    self.wOffset = 0.0f; //self.bounds.size.width * 0.4;
+    self.hOffset = 0.0f; //self.bounds.size.height * 0.4;
     self.centerOffset = CGPointMake(MISSCREENW * 0.6, MISSCREENH * 0.6);
     
     self.retractDuration = 5.0f;
@@ -130,10 +130,10 @@
         center.y += translation.y;
         self.center = center;
         
-        CGFloat  rightMaxX = MISSCREENW - self.bounds.size.width + self.wOffset;
         CGFloat   leftMinX = -self.wOffset;
-        CGFloat bottomMaxY = MISSCREENH - self.bounds.size.height + self.hOffset;
         CGFloat    topMinY = -self.hOffset;
+        CGFloat  rightMaxX = MISSCREENW - self.bounds.size.width + self.wOffset;
+        CGFloat bottomMaxY = MISSCREENH - self.bounds.size.height + self.hOffset;
         
         CGRect frame = self.frame;
         frame.origin.x = frame.origin.x > rightMaxX ? rightMaxX : frame.origin.x;
@@ -146,7 +146,23 @@
         [panGesture setTranslation:CGPointZero inView:self];
     }
     else if (UIGestureRecognizerStateEnded == panGesture.state) {
-        
+        if (self.autoRetract) { 
+            __block CGPoint center = self.center;
+            // 自动缩进
+            if (center.y < (self.bounds.size.height * 1.5)
+                || (center.y > (MISSCREENH - self.bounds.size.height * 1.5))) {
+                [UIView animateWithDuration:0.3f animations:^{
+                    center.y = (center.y > MISSCREENH * 0.5) ? (MISSCREENH - self.bounds.size.height * 0.5) : (self.bounds.size.height * 0.5);
+                    self.center = center;
+                }];
+            }
+            else {
+                [UIView animateWithDuration:0.3f animations:^{
+                    center.x = (center.x > MISSCREENW * 0.5) ? (MISSCREENW - self.bounds.size.width * 0.5) : (self.bounds.size.width * 0.5);
+                    self.center = center;
+                }];
+            }
+        }
     }
 }
 

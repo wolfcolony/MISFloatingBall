@@ -35,6 +35,7 @@ typedef NS_ENUM(NSUInteger, MISFloatingBallOriginPosition) {
 /**< 悬浮球内部视图 （可以外部添加） */
 @property (nullable, nonatomic, strong, readonly) UIView *contentView;
 
+// old
 - (void)show;
 @end
 NS_ASSUME_NONNULL_END
