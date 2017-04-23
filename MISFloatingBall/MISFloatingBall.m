@@ -70,6 +70,8 @@
     
     self.retractDuration = 5.0f;
     self.autoRetract = NO;
+    
+    self.autoCloseEdge = YES;
 }
 
 - (void)addGestureRecognizer {
@@ -146,9 +148,9 @@
         [panGesture setTranslation:CGPointZero inView:self];
     }
     else if (UIGestureRecognizerStateEnded == panGesture.state) {
-        if (self.autoRetract) { 
+        if (self.isAutoCloseEdge) {
             __block CGPoint center = self.center;
-            // 自动缩进
+            // 自动靠近边缘
             if (center.y < (self.bounds.size.height * 1.5)
                 || (center.y > (MISSCREENH - self.bounds.size.height * 1.5))) {
                 [UIView animateWithDuration:0.3f animations:^{
