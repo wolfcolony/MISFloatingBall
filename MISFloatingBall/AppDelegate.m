@@ -23,6 +23,7 @@
     [self.floatinBall autoEdgeRetractDuration:3.0f edgeRetractConfigHander:^MISEdgeRetractConfig{
         return MISEdgeOffsetConfigMake(CGPointMake(20, 20), 0.5f);
     }];
+    
     [self.floatinBall show];
     return YES;
 }

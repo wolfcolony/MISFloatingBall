@@ -12,9 +12,6 @@
 #define MISSCREENH [UIScreen mainScreen].bounds.size.height
 
 @interface MISFloatingBall()
-@property (nonatomic, assign) CGFloat wOffset;
-@property (nonatomic, assign) CGFloat hOffset;
-
 @property (nonatomic, assign) CGPoint centerOffset;
 @property (nonatomic, strong) UIViewController *containerVC;
 
@@ -61,16 +58,12 @@
 
 - (void)initialize {
     self.layer.cornerRadius = 10.f;
+    self.layer.masksToBounds = YES;
     self.windowLevel = UIWindowLevelAlert + 100;
-    self.backgroundColor = [UIColor clearColor];
+    self.backgroundColor = [UIColor redColor];
     self.containerVC = [[UIViewController alloc] init];
-    self.containerVC.view.backgroundColor = [UIColor redColor];
     self.rootViewController = self.containerVC;
-    
-    self.wOffset = 0.0f; //self.bounds.size.width * 0.4;
-    self.hOffset = 0.0f; //self.bounds.size.height * 0.4;
     self.centerOffset = CGPointMake(MISSCREENW * 0.6, MISSCREENH * 0.6);
-
     self.autoCloseEdge = YES;
 }
 
@@ -145,7 +138,8 @@
 
 - (void)panGestureRecognizer:(UIPanGestureRecognizer *)panGesture {
     if (UIGestureRecognizerStateBegan == panGesture.state) {
-        self.alpha = 1.0f;
+        [self setAlpha:1.0f];
+        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(autoEdgeOffset) object:nil];
     }
     else if (UIGestureRecognizerStateChanged == panGesture.state) {
         CGPoint translation = [panGesture translationInView:self];
@@ -155,10 +149,10 @@
         center.y += translation.y;
         self.center = center;
         
-        CGFloat   leftMinX = -self.wOffset;
-        CGFloat    topMinY = -self.hOffset;
-        CGFloat  rightMaxX = MISSCREENW - self.bounds.size.width + self.wOffset;
-        CGFloat bottomMaxY = MISSCREENH - self.bounds.size.height + self.hOffset;
+        CGFloat   leftMinX = 0.0f;
+        CGFloat    topMinY = 0.0f;
+        CGFloat  rightMaxX = MISSCREENW - self.bounds.size.width;
+        CGFloat bottomMaxY = MISSCREENH - self.bounds.size.height;
         
         CGRect frame = self.frame;
         frame.origin.x = frame.origin.x > rightMaxX ? rightMaxX : frame.origin.x;

@@ -34,10 +34,6 @@ UIKIT_STATIC_INLINE MISEdgeRetractConfig MISEdgeOffsetConfigMake(CGPoint edgeRet
 
 @property (nonatomic, assign, readonly) CGSize ballSize;
 @property (nonatomic, assign, readonly) MISFloatingBallOriginPosition originPosition;
-
-/**
- 手势结束自动靠近边缘 (默认为 YES)
- */
 @property (nonatomic, assign, getter=isAutoCloseEdge) BOOL autoCloseEdge;
 
 /**
@@ -47,7 +43,6 @@ UIKIT_STATIC_INLINE MISEdgeRetractConfig MISEdgeOffsetConfigMake(CGPoint edgeRet
  @param edgeRetractConfigHander 缩进后参数的配置(如果为NULL，则使用默认的配置)
  */
 - (void)autoEdgeRetractDuration:(NSTimeInterval)duration edgeRetractConfigHander:(MISEdgeRetractConfig(^)())edgeRetractConfigHander;
-
 
 
 
