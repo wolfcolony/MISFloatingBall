@@ -15,8 +15,11 @@
 @property (nonatomic, assign) CGFloat wOffset;
 @property (nonatomic, assign) CGFloat hOffset;
 
-@property (nonatomic, assign) CGPoint centerOffset; /**< 中心点的最大偏移限制 */
+@property (nonatomic, assign) CGPoint centerOffset;
 @property (nonatomic, strong) UIViewController *containerVC;
+
+@property (nonatomic,   copy) MISEdgeRetractConfig(^edgeRetractConfigHander)();
+@property (nonatomic, assign) NSTimeInterval autoEdgeOffsetDuration;
 @end
 
 @implementation MISFloatingBall
@@ -67,10 +70,7 @@
     self.wOffset = 0.0f; //self.bounds.size.width * 0.4;
     self.hOffset = 0.0f; //self.bounds.size.height * 0.4;
     self.centerOffset = CGPointMake(MISSCREENW * 0.6, MISSCREENH * 0.6);
-    
-    self.retractDuration = 5.0f;
-    self.autoRetract = NO;
-    
+
     self.autoCloseEdge = YES;
 }
 
@@ -82,47 +82,70 @@
     [self addGestureRecognizer:panGesture];
 }
 
-- (void)autoRetract {
-    [UIView animateWithDuration:0.5f animations:^{
-        CGRect frame = self.frame;
-        switch (self.originPosition) {
-            case MISFloatingBallOriginPositionTop: {
-                frame.origin.y = -self.hOffset;
-                self.frame = frame;
-                break;
-            }
-            case MISFloatingBallOriginPositionBottom: {
-                frame.origin.y = MISSCREENH - self.bounds.size.height + self.hOffset;
-                self.frame = frame;
-                break;
-            }
-            case MISFloatingBallOriginPositionLeft: {
-                frame.origin.x = -self.wOffset;
-                self.frame = frame;
-                break;
-            }
-            case MISFloatingBallOriginPositionRight: {
-                frame.origin.x = MISSCREENW - self.bounds.size.width + self.wOffset;
-                self.frame = frame;
-                break;
-            }
-            default:
-                break;
-        }
-    }];
-}
-
 #pragma mark - Public Methods
 
 - (void)show {
     [self makeKeyAndVisible];
 }
 
+- (void)autoEdgeRetractDuration:(NSTimeInterval)duration edgeRetractConfigHander:(MISEdgeRetractConfig (^)())edgeRetractConfigHander {
+    if (self.isAutoCloseEdge) {
+        // 只有自动靠近边缘的时候才生效
+        self.edgeRetractConfigHander = edgeRetractConfigHander;
+        self.autoEdgeOffsetDuration = duration;
+        
+        [self performSelector:@selector(autoEdgeOffset) withObject:nil afterDelay:duration];
+    }
+}
+
+- (void)autoEdgeOffset {
+    MISEdgeRetractConfig config = self.edgeRetractConfigHander ? self.edgeRetractConfigHander() : MISEdgeOffsetConfigMake(CGPointMake(self.bounds.size.width * 0.5, self.bounds.size.height * 0.5), 0.8);
+    
+    __block CGPoint center = self.center;
+    
+    if (fabs(center.x - self.bounds.size.width * 0.5) < 0.000001) {
+        // 当前靠近屏幕左边缘
+        [UIView animateWithDuration:0.5f animations:^{
+            center.x = center.x - config.edgeRetractOffset.x;
+            self.center = center;
+            
+            self.alpha = config.edgeRetractAlpha;
+        }];
+    }
+    else if (fabs(center.x - (MISSCREENW - self.bounds.size.width * 0.5)) < 0.000001) {
+        // 当前靠近屏幕右边缘
+        [UIView animateWithDuration:0.5f animations:^{
+            center.x = center.x + config.edgeRetractOffset.x;
+            self.center = center;
+            
+            self.alpha = config.edgeRetractAlpha;
+        }];
+    }
+    else if (fabs(center.y - self.bounds.size.height * 0.5) < 0.000001) {
+        // 当前靠近屏幕上边缘
+        [UIView animateWithDuration:0.5f animations:^{
+            center.y = center.y - config.edgeRetractOffset.y;
+            self.center = center;
+            
+            self.alpha = config.edgeRetractAlpha;
+        }];
+    }
+    else if (fabs(center.y - (MISSCREENH - self.bounds.size.height * 0.5)) < 0.000001) {
+        // 当前靠近屏幕底边缘
+        [UIView animateWithDuration:0.5f animations:^{
+            center.y = center.y + config.edgeRetractOffset.y;
+            self.center = center;
+            
+            self.alpha = config.edgeRetractAlpha;
+        }];
+    }
+}
+
 #pragma mark - GestureRecognizer
 
 - (void)panGestureRecognizer:(UIPanGestureRecognizer *)panGesture {
     if (UIGestureRecognizerStateBegan == panGesture.state) {
-        
+        self.alpha = 1.0f;
     }
     else if (UIGestureRecognizerStateChanged == panGesture.state) {
         CGPoint translation = [panGesture translationInView:self];
@@ -165,6 +188,8 @@
                 }];
             }
         }
+        
+        [self performSelector:@selector(autoEdgeOffset) withObject:nil afterDelay:self.autoEdgeOffsetDuration];
     }
 }
 
@@ -176,14 +201,6 @@
 
 - (void)setBallSize:(CGSize)ballSize {
     _ballSize = ballSize;
-}
-
-- (void)setAutoRetract:(BOOL)autoRetract {
-    _autoRetract = autoRetract;
-    
-    if (autoRetract) {
-        [self performSelector:@selector(autoRetract) withObject:nil afterDelay:self.retractDuration];
-    }
 }
 
 - (void)setOriginPosition:(MISFloatingBallOriginPosition)originPosition {
