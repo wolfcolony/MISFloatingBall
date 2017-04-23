@@ -7,11 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MISFloatingBall.h"
+
+@interface AppDelegateManager : NSObject
+
++ (instancetype)shareManager;
+
+@property (nonatomic, strong) MISFloatingBall *floatinBall;
+@end
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
-
-
 @end
 

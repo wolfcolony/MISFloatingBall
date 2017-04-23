@@ -17,12 +17,16 @@
 
 @property (nonatomic,   copy) MISEdgeRetractConfig(^edgeRetractConfigHander)();
 @property (nonatomic, assign) NSTimeInterval autoEdgeOffsetDuration;
+
+@property (nonatomic, assign, getter=isAutoEdgeRetract) BOOL autoEdgeRetract;
+
+@property (nonatomic, strong) UIImageView *ballImageView;
+@property (nonatomic, strong) UILabel *ballLabel;
+@property (nonatomic, strong) UIView *ballCustomView;
 @end
 
 @implementation MISFloatingBall
-@synthesize ballSize = _ballSize;
 @synthesize originPosition = _originPosition;
-@synthesize contentView = _contentView;
 
 #pragma mark - Life Cycle
 
@@ -34,10 +38,6 @@
     return [self initFloatingBallWithSize:CGSizeMake(44, 44) originPosition:MISFloatingBallOriginPositionTop];
 }
 
-- (instancetype)initWithFrame:(CGRect)frame {
-    return [self initFloatingBallWithSize:frame.size originPosition:MISFloatingBallOriginPositionTop];
-}
-
 - (instancetype)initFloatingBallWithOriginPosition:(MISFloatingBallOriginPosition)originPosition {
     return [self initFloatingBallWithSize:CGSizeMake(44, 44) originPosition:originPosition];
 }
@@ -47,9 +47,16 @@
     if (self) {
         [self initialize];
         [self addGestureRecognizer];
-        
         self.originPosition = originPosition;
-        self.ballSize = ballSize;
+    }
+    return self;
+}
+
+- (instancetype)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self initialize];
+        [self addGestureRecognizer];
     }
     return self;
 }
@@ -57,14 +64,14 @@
 #pragma mark - Private
 
 - (void)initialize {
-    self.layer.cornerRadius = 10.f;
     self.layer.masksToBounds = YES;
     self.windowLevel = UIWindowLevelAlert + 100;
-    self.backgroundColor = [UIColor redColor];
+    self.backgroundColor = [UIColor clearColor];
     self.containerVC = [[UIViewController alloc] init];
     self.rootViewController = self.containerVC;
     self.centerOffset = CGPointMake(MISSCREENW * 0.6, MISSCREENH * 0.6);
     self.autoCloseEdge = YES;
+    self.autoEdgeRetract = NO;
 }
 
 - (void)addGestureRecognizer {
@@ -73,22 +80,6 @@
     
     [self addGestureRecognizer:tapGesture];
     [self addGestureRecognizer:panGesture];
-}
-
-#pragma mark - Public Methods
-
-- (void)show {
-    [self makeKeyAndVisible];
-}
-
-- (void)autoEdgeRetractDuration:(NSTimeInterval)duration edgeRetractConfigHander:(MISEdgeRetractConfig (^)())edgeRetractConfigHander {
-    if (self.isAutoCloseEdge) {
-        // 只有自动靠近边缘的时候才生效
-        self.edgeRetractConfigHander = edgeRetractConfigHander;
-        self.autoEdgeOffsetDuration = duration;
-        
-        [self performSelector:@selector(autoEdgeOffset) withObject:nil afterDelay:duration];
-    }
 }
 
 - (void)autoEdgeOffset {
@@ -134,6 +125,58 @@
     }
 }
 
+#pragma mark - Public Methods
+
+- (void)visibleBall {
+    [self makeKeyAndVisible];
+}
+
+- (void)disVisibleBall {
+    NSLog(@"disVisibleBall");
+}
+
+- (void)autoEdgeRetractDuration:(NSTimeInterval)duration edgeRetractConfigHander:(MISEdgeRetractConfig (^)())edgeRetractConfigHander {
+    if (self.isAutoCloseEdge) {
+        // 只有自动靠近边缘的时候才生效
+        self.edgeRetractConfigHander = edgeRetractConfigHander;
+        self.autoEdgeOffsetDuration = duration;
+        
+        [self performSelector:@selector(autoEdgeOffset) withObject:nil afterDelay:duration];
+        
+        self.autoEdgeRetract = YES;
+    }
+}
+
+- (void)setBallContent:(id)content contentType:(MISFloatingBallContentType)contentType {
+    BOOL notUnknowType = (MISFloatingBallContentTypeCustomView == contentType) || (MISFloatingBallContentTypeImage == contentType) || (MISFloatingBallContentTypeText == contentType);
+    NSAssert(notUnknowType, @"can't set ball content with an unknow content type");
+    
+     [self.ballCustomView removeFromSuperview];
+    if (MISFloatingBallContentTypeImage == contentType) {
+        NSAssert([content isKindOfClass:[UIImage class]], @"can't set ball content with a not image content for image type");
+        [self.ballLabel setHidden:YES];
+        [self.ballCustomView setHidden:YES];
+        [self.ballImageView setHidden:NO];
+        [self.ballImageView setImage:(UIImage *)content];
+    }
+    else if (MISFloatingBallContentTypeText == contentType) {
+        NSAssert([content isKindOfClass:[NSString class]], @"can't set ball content with a not nsstring content for text type");
+        [self.ballLabel setHidden:NO];
+        [self.ballCustomView setHidden:YES];
+        [self.ballImageView setHidden:YES];
+        [self.ballLabel setText:(NSString *)content];
+    }
+    else if (MISFloatingBallContentTypeCustomView == contentType) {
+        NSAssert([content isKindOfClass:[UIView class]], @"can't set ball content with a not uiview content for custom view type");
+        [self.ballLabel setHidden:YES];
+        [self.ballCustomView setHidden:NO];
+        [self.ballImageView setHidden:YES];
+        
+        self.ballCustomView = (UIView *)content;
+        self.ballCustomView.userInteractionEnabled = NO;
+        [self addSubview:self.ballCustomView];
+    }
+}
 #pragma mark - GestureRecognizer
 
 - (void)panGestureRecognizer:(UIPanGestureRecognizer *)panGesture {
@@ -183,18 +226,22 @@
             }
         }
         
-        [self performSelector:@selector(autoEdgeOffset) withObject:nil afterDelay:self.autoEdgeOffsetDuration];
+        if (self.isAutoEdgeRetract) {
+            [self performSelector:@selector(autoEdgeOffset) withObject:nil afterDelay:self.autoEdgeOffsetDuration];
+        }
     }
 }
 
 - (void)tapGestureRecognizer:(UIPanGestureRecognizer *)tapGesture {
-    NSLog(@"tap!!!");
+    NSLog(@"floating ball tap");
 }
 
 #pragma mark - Setter / Getter
 
-- (void)setBallSize:(CGSize)ballSize {
-    _ballSize = ballSize;
+- (void)setTextTypeTextColor:(UIColor *)textTypeTextColor {
+    _textTypeTextColor = textTypeTextColor;
+    
+    [self.ballLabel setTextColor:textTypeTextColor];
 }
 
 - (void)setOriginPosition:(MISFloatingBallOriginPosition)originPosition {
@@ -223,5 +270,25 @@
         default:
             break;
     }
+}
+
+- (UIImageView *)ballImageView {
+    if (!_ballImageView) {
+        _ballImageView = [[UIImageView alloc] initWithFrame:self.bounds];
+        [self addSubview:_ballImageView];
+    }
+    return _ballImageView;
+}
+
+- (UILabel *)ballLabel {
+    if (!_ballLabel) {
+        _ballLabel = [[UILabel alloc] initWithFrame:self.bounds];
+        _ballLabel.textAlignment = NSTextAlignmentCenter;
+        _ballLabel.numberOfLines = 1.0f;
+        _ballLabel.minimumScaleFactor = 0.0f;
+        _ballLabel.adjustsFontSizeToFitWidth = YES;
+        [self addSubview:_ballLabel];
+    }
+    return _ballLabel;
 }
 @end

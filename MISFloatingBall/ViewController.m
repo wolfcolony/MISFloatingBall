@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import "AppDelegate.h"
 
 @interface ViewController ()
 @property (nonatomic, strong) UIButton *button;
@@ -61,6 +62,7 @@
 
 - (void)buttonClick {
     NSLog(@"button click");
+    [[AppDelegateManager shareManager].floatinBall disVisibleBall];
 }
 
 @end

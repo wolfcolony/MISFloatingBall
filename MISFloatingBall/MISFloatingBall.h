@@ -17,6 +17,12 @@ typedef NS_ENUM(NSUInteger, MISFloatingBallOriginPosition) {
     MISFloatingBallOriginPositionRight,
 };
 
+typedef NS_ENUM(NSUInteger, MISFloatingBallContentType) {
+    MISFloatingBallContentTypeImage = 0,    // 图片
+    MISFloatingBallContentTypeText,         // 文字
+    MISFloatingBallContentTypeCustomView    // 自定义视图
+};
+
 typedef struct MISEdgeRetractConfig {
     CGPoint edgeRetractOffset; /**< 缩进结果偏移量 */
     CGFloat edgeRetractAlpha;  /**< 缩进后的透明度 */
@@ -27,14 +33,17 @@ UIKIT_STATIC_INLINE MISEdgeRetractConfig MISEdgeOffsetConfigMake(CGPoint edgeRet
     return config;
 }
 
+@protocol MISFloatingBallDelegate;
 @interface MISFloatingBall : UIWindow
-
 - (instancetype)initFloatingBallWithSize:(CGSize)ballSize
                           originPosition:(MISFloatingBallOriginPosition)originPosition;
+- (void)visibleBall;
+- (void)disVisibleBall;
 
-@property (nonatomic, assign, readonly) CGSize ballSize;
 @property (nonatomic, assign, readonly) MISFloatingBallOriginPosition originPosition;
 @property (nonatomic, assign, getter=isAutoCloseEdge) BOOL autoCloseEdge;
+
+@property (nonatomic, weak) id<MISFloatingBallDelegate> delegate;
 
 /**
  当悬浮球靠近边缘的时候，自动像边缘缩进一段间距 (只有autoCloseEdge为YES时候才会生效)
@@ -44,18 +53,20 @@ UIKIT_STATIC_INLINE MISEdgeRetractConfig MISEdgeOffsetConfigMake(CGPoint edgeRet
  */
 - (void)autoEdgeRetractDuration:(NSTimeInterval)duration edgeRetractConfigHander:(MISEdgeRetractConfig(^)())edgeRetractConfigHander;
 
+/**
+ 设置ball内部的内容
 
+ @param content 内容
+ @param contentType 内容类型（存在三种文字，图片，和自定义传入视图）
+ */
+- (void)setBallContent:(id)content contentType:(MISFloatingBallContentType)contentType;
 
-
-
-
-
-
-
-///////// old
-/**< 悬浮球内部视图 （可以外部添加） */
-@property (nullable, nonatomic, strong, readonly) UIView *contentView;
-
-- (void)show;
+// 文字颜色
+@property (nonatomic, strong) UIColor *textTypeTextColor;
 @end
+
+@protocol MISFloatingBallDelegate<NSObject>
+@optional
+@end
+
 NS_ASSUME_NONNULL_END

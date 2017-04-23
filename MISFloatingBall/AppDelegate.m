@@ -7,27 +7,62 @@
 //
 
 #import "AppDelegate.h"
-#import "MISFloatingBall.h"
+
+@implementation AppDelegateManager
+
++ (instancetype)shareManager {
+    static AppDelegateManager *mgr = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        mgr = [[AppDelegateManager alloc] init];
+    });
+    return mgr;
+}
+
+@end
 
 @interface AppDelegate ()
 @property (nonatomic, strong) MISFloatingBall *floatinBall;
-
 @end
 
 @implementation AppDelegate
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    self.floatinBall = [[MISFloatingBall alloc] initFloatingBallWithSize:CGSizeMake(60, 60) originPosition:MISFloatingBallOriginPositionRight];
+    self.floatinBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(100, 100, 60, 60)];
+//    self.floatinBall.backgroundColor = [UIColor lightGrayColor];
+//    self.floatinBall.autoCloseEdge = NO;
     
-    [self.floatinBall autoEdgeRetractDuration:3.0f edgeRetractConfigHander:^MISEdgeRetractConfig{
-        return MISEdgeOffsetConfigMake(CGPointMake(20, 20), 0.5f);
-    }];
+    [self.floatinBall setBallContent:@"悬浮球哈哈哈" contentType:MISFloatingBallContentTypeText];
     
-    [self.floatinBall show];
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 60, 60)];
+    [button setTitle:@"测试" forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+    [self.floatinBall setBallContent:button contentType:MISFloatingBallContentTypeCustomView];
+    
+    UIButton *button1 = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 60, 60)];
+    [button1 setTitle:@"测试2" forState:UIControlStateNormal];
+    [button1 setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+    [button1 addTarget:self action:@selector(test) forControlEvents:UIControlEventTouchUpInside];
+    [self.floatinBall setBallContent:button1 contentType:MISFloatingBallContentTypeCustomView];
+    
+    UIButton *button3 = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 60, 60)];
+    [button3 setTitle:@"测试2" forState:UIControlStateNormal];
+    [button3 setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
+    [self.floatinBall setBallContent:button3 contentType:MISFloatingBallContentTypeCustomView];
+    
+    
+    [self.floatinBall visibleBall];
+    [self.floatinBall setBallContent:[UIImage imageNamed:@"apple"] contentType:MISFloatingBallContentTypeImage];
+    
+    [AppDelegateManager shareManager].floatinBall = self.floatinBall;
+    
     return YES;
 }
 
+- (void)test {
+    NSLog(@"test");
+}
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
