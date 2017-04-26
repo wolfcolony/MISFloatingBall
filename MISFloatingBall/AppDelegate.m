@@ -33,6 +33,7 @@
 //    self.floatinBall.backgroundColor = [UIColor lightGrayColor];
 //    self.floatinBall.autoCloseEdge = NO;
     
+    /*
     [self.floatinBall setBallContent:@"悬浮球哈哈哈" contentType:MISFloatingBallContentTypeText];
     
     UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 60, 60)];
@@ -51,13 +52,16 @@
     [button3 setTitleColor:[UIColor blueColor] forState:UIControlStateNormal];
     [self.floatinBall setBallContent:button3 contentType:MISFloatingBallContentTypeCustomView];
     
-    
+    */
     [self.floatinBall visibleBall];
     [self.floatinBall setBallContent:[UIImage imageNamed:@"apple"] contentType:MISFloatingBallContentTypeImage];
-    
     [AppDelegateManager shareManager].floatinBall = self.floatinBall;
     
     return YES;
+}
+
+- (id)floatingBall:(MISFloatingBall *)floatingBall clickJumpKind:(NSString *)kind {
+    return nil;
 }
 
 - (void)test {

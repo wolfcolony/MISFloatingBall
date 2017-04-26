@@ -33,17 +33,15 @@ UIKIT_STATIC_INLINE MISEdgeRetractConfig MISEdgeOffsetConfigMake(CGPoint edgeRet
     return config;
 }
 
-@protocol MISFloatingBallDelegate;
 @interface MISFloatingBall : UIWindow
 - (instancetype)initFloatingBallWithSize:(CGSize)ballSize
                           originPosition:(MISFloatingBallOriginPosition)originPosition;
+
 - (void)visibleBall;
 - (void)disVisibleBall;
 
 @property (nonatomic, assign, readonly) MISFloatingBallOriginPosition originPosition;
 @property (nonatomic, assign, getter=isAutoCloseEdge) BOOL autoCloseEdge;
-
-@property (nonatomic, weak) id<MISFloatingBallDelegate> delegate;
 
 /**
  当悬浮球靠近边缘的时候，自动像边缘缩进一段间距 (只有autoCloseEdge为YES时候才会生效)
@@ -64,9 +62,4 @@ UIKIT_STATIC_INLINE MISEdgeRetractConfig MISEdgeOffsetConfigMake(CGPoint edgeRet
 // 文字颜色
 @property (nonatomic, strong) UIColor *textTypeTextColor;
 @end
-
-@protocol MISFloatingBallDelegate<NSObject>
-@optional
-@end
-
 NS_ASSUME_NONNULL_END

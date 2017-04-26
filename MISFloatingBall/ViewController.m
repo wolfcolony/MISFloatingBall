@@ -32,10 +32,8 @@
     self.testView = [[UIView alloc] initWithFrame:CGRectMake(200, 300, 100, 100)];
     self.testView.backgroundColor = [UIColor orangeColor];
     [self.view addSubview:self.testView];
-    
     self.pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(pan:)];
     self.tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
-    
     [self.testView addGestureRecognizer:self.pan];
     [self.testView addGestureRecognizer:self.tap];
 }
@@ -62,7 +60,6 @@
 
 - (void)buttonClick {
     NSLog(@"button click");
-    [[AppDelegateManager shareManager].floatinBall disVisibleBall];
 }
 
 @end
