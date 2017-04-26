@@ -8,6 +8,8 @@
 
 #import "ViewController.h"
 #import "AppDelegate.h"
+#import "TwoViewController.h"
+#import "MISFloatingBall.h"
 
 @interface ViewController ()
 @property (nonatomic, strong) UIButton *button;
@@ -15,9 +17,15 @@
 @property (nonatomic, strong) UIPanGestureRecognizer *pan;
 @property (nonatomic, strong) UITapGestureRecognizer *tap;
 
+@property (nonatomic, strong) MISFloatingBall *floatinBall;
+
 @end
 
 @implementation ViewController
+
+- (void)viewWillLayoutSubviews {
+    self.view.frame = CGRectMake(0, 64, self.view.bounds.size.width, self.view.bounds.size.height - 64);
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -36,11 +44,21 @@
     self.tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
     [self.testView addGestureRecognizer:self.pan];
     [self.testView addGestureRecognizer:self.tap];
+    
+    self.floatinBall = [[MISFloatingBall alloc] initFloatingBallWithSize:CGSizeMake(44, 44) originPosition:MISFloatingBallOriginPositionRight];
+    self.floatinBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(100, 100, 60, 60)];
+    [self.floatinBall setBallContent:[UIImage imageNamed:@"apple"] contentType:MISFloatingBallContentTypeImage];
+    
+    [self.floatinBall autoEdgeRetractDuration:0.0f edgeRetractConfigHander:NULL];
+    
+    [self.floatinBall makeVisibleAtView:self.view];
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [super touchesBegan:touches withEvent:event];
-    NSLog(@"touch");
+    
+//    TwoViewController *twoVC = [[TwoViewController alloc] init];
+//    [self.navigationController pushViewController:twoVC animated:YES];
 }
 
 - (void)pan:(UIPanGestureRecognizer *)pan {

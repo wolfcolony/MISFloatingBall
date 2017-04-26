@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C41579091EB0DA8C00BAA645 /* TwoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C41579081EB0DA8C00BAA645 /* TwoViewController.m */; };
 		C4E87DD01EAB24520098F645 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C4E87DCF1EAB24520098F645 /* main.m */; };
 		C4E87DD31EAB24520098F645 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C4E87DD21EAB24520098F645 /* AppDelegate.m */; };
 		C4E87DD61EAB24520098F645 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C4E87DD51EAB24520098F645 /* ViewController.m */; };
@@ -17,6 +18,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C41579071EB0DA8C00BAA645 /* TwoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TwoViewController.h; sourceTree = "<group>"; };
+		C41579081EB0DA8C00BAA645 /* TwoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TwoViewController.m; sourceTree = "<group>"; };
 		C4E87DCB1EAB24520098F645 /* MISFloatingBall.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MISFloatingBall.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4E87DCF1EAB24520098F645 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		C4E87DD11EAB24520098F645 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -66,6 +69,8 @@
 				C4E87DD21EAB24520098F645 /* AppDelegate.m */,
 				C4E87DD41EAB24520098F645 /* ViewController.h */,
 				C4E87DD51EAB24520098F645 /* ViewController.m */,
+				C41579071EB0DA8C00BAA645 /* TwoViewController.h */,
+				C41579081EB0DA8C00BAA645 /* TwoViewController.m */,
 				C4E87DD71EAB24520098F645 /* Main.storyboard */,
 				C4E87DDA1EAB24520098F645 /* Assets.xcassets */,
 				C4E87DDC1EAB24520098F645 /* LaunchScreen.storyboard */,
@@ -167,6 +172,7 @@
 				C4E87DE71EAB2BA50098F645 /* MISFloatingBall.m in Sources */,
 				C4E87DD61EAB24520098F645 /* ViewController.m in Sources */,
 				C4E87DD31EAB24520098F645 /* AppDelegate.m in Sources */,
+				C41579091EB0DA8C00BAA645 /* TwoViewController.m in Sources */,
 				C4E87DD01EAB24520098F645 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

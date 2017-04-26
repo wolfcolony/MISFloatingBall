@@ -37,8 +37,22 @@ UIKIT_STATIC_INLINE MISEdgeRetractConfig MISEdgeOffsetConfigMake(CGPoint edgeRet
 - (instancetype)initFloatingBallWithSize:(CGSize)ballSize
                           originPosition:(MISFloatingBallOriginPosition)originPosition;
 
-- (void)visibleBall;
-- (void)disVisibleBall;
+/**
+ 显示悬浮球（默认全局，整个APP可用）
+ */
+- (void)makeVisible;
+
+/**
+ 显示悬浮球，指定View内生效
+
+ @param view 指定的View
+ */
+- (void)makeVisibleAtView:(UIView *)view;
+
+/**
+ 隐藏悬浮球
+ */
+- (void)makeDisVisible;
 
 @property (nonatomic, assign, readonly) MISFloatingBallOriginPosition originPosition;
 @property (nonatomic, assign, getter=isAutoCloseEdge) BOOL autoCloseEdge;
@@ -49,7 +63,7 @@ UIKIT_STATIC_INLINE MISEdgeRetractConfig MISEdgeOffsetConfigMake(CGPoint edgeRet
  @param duration 缩进间隔
  @param edgeRetractConfigHander 缩进后参数的配置(如果为NULL，则使用默认的配置)
  */
-- (void)autoEdgeRetractDuration:(NSTimeInterval)duration edgeRetractConfigHander:(MISEdgeRetractConfig(^)())edgeRetractConfigHander;
+- (void)autoEdgeRetractDuration:(NSTimeInterval)duration edgeRetractConfigHander:(nullable MISEdgeRetractConfig(^)())edgeRetractConfigHander;
 
 /**
  设置ball内部的内容

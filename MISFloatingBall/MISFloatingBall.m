@@ -8,24 +8,22 @@
 
 #import "MISFloatingBall.h"
 
-#define MISSCREENW [UIScreen mainScreen].bounds.size.width
-#define MISSCREENH [UIScreen mainScreen].bounds.size.height
-
 @interface MISFloatingBall()
 @property (nonatomic, assign) CGRect ballFrame; // 悬浮球的尺寸
-@property (nonatomic, strong) UIView *ballView; // 悬浮球
-
 @property (nonatomic, assign) CGPoint centerOffset;
-@property (nonatomic, strong) UIViewController *containerVC;
 
 @property (nonatomic,   copy) MISEdgeRetractConfig(^edgeRetractConfigHander)();
 @property (nonatomic, assign) NSTimeInterval autoEdgeOffsetDuration;
 
 @property (nonatomic, assign, getter=isAutoEdgeRetract) BOOL autoEdgeRetract;
 
+@property (nonatomic, strong) UIViewController *containerVC;
+@property (nonatomic, strong) UIView *ballView; // 悬浮球
 @property (nonatomic, strong) UIImageView *ballImageView;
 @property (nonatomic, strong) UILabel *ballLabel;
 @property (nonatomic, strong) UIView *ballCustomView;
+
+@property (nonatomic, strong) UIView *parentView;
 @end
 
 @implementation MISFloatingBall
@@ -38,7 +36,7 @@
 }
 
 - (instancetype)init {
-    return [self initFloatingBallWithSize:CGSizeMake(44, 44) originPosition:MISFloatingBallOriginPositionTop];
+    return [self initFloatingBallWithSize:CGSizeMake(44, 44) originPosition:MISFloatingBallOriginPositionRight];
 }
 
 - (instancetype)initFloatingBallWithOriginPosition:(MISFloatingBallOriginPosition)originPosition {
@@ -46,13 +44,10 @@
 }
 
 - (instancetype)initFloatingBallWithSize:(CGSize)ballSize originPosition:(MISFloatingBallOriginPosition)originPosition {
-    self = [super initWithFrame:[UIScreen mainScreen].bounds];
+    self = [self initWithFrame:[UIScreen mainScreen].bounds];
     if (self) {
-        [self initialize];
-        
-        // other
-        self.originPosition = originPosition;
         self.ballFrame = CGRectMake(0, 0, ballSize.width, ballSize.height);
+        self.originPosition = originPosition;
     }
     return self;
 }
@@ -60,40 +55,37 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:[UIScreen mainScreen].bounds];
     if (self) {
-        [self initialize];
-        
         self.ballFrame = frame;
+        
+        [self initialize];
     }
     return self;
 }
 
-//- (void)setFrame:(CGRect)frame {
-//    [super setFrame:[UIScreen mainScreen].bounds];
-//    self.ballView.frame = frame;
-//}
-
-#pragma marl - Touch 
-
-- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
-    UIView *hitView = [super hitTest:point withEvent:event];
-    
-    return [hitView isEqual:self.ballView] ? hitView : nil;
-}
-
-#pragma mark - Private
-
 - (void)initialize {
     self.layer.masksToBounds = YES;
-    self.windowLevel = UIWindowLevelAlert + 100;
+    self.windowLevel = UIWindowLevelStatusBar + 999;
     self.backgroundColor = [UIColor clearColor];
-    self.centerOffset = CGPointMake(MISSCREENW * 0.6, MISSCREENH * 0.6);
-    self.autoCloseEdge = YES;
-    self.autoEdgeRetract = NO;
+    self.autoCloseEdge = YES;   // 自动靠边
+    self.autoEdgeRetract = NO;  // 自动缩进
     
     self.containerVC = [[UIViewController alloc] init];
     self.rootViewController = self.containerVC;
     self.rootViewController.view.backgroundColor = [UIColor clearColor];
 }
+
+- (void)setFrame:(CGRect)frame {
+    [super setFrame:frame];
+}
+
+#pragma mark - HitTest Event
+
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+    UIView *hitView = [super hitTest:point withEvent:event];
+    return [[super hitTest:point withEvent:event] isEqual:self.ballView] ? hitView : nil;
+}
+
+#pragma mark - Private
 
 - (void)autoEdgeOffset {
     MISEdgeRetractConfig config = self.edgeRetractConfigHander ? self.edgeRetractConfigHander() : MISEdgeOffsetConfigMake(CGPointMake(self.ballView.bounds.size.width * 0.5, self.ballView.bounds.size.height * 0.5), 0.8);
@@ -109,7 +101,7 @@
             self.ballView.alpha = config.edgeRetractAlpha;
         }];
     }
-    else if (fabs(center.x - (MISSCREENW - self.ballView.bounds.size.width * 0.5)) < 0.000001) {
+    else if (fabs(center.x - (self.parentView.bounds.size.width - self.ballView.bounds.size.width * 0.5)) < 0.000001) {
         // 当前靠近屏幕右边缘
         [UIView animateWithDuration:0.5f animations:^{
             center.x = center.x + config.edgeRetractOffset.x;
@@ -127,7 +119,7 @@
             self.ballView.alpha = config.edgeRetractAlpha;
         }];
     }
-    else if (fabs(center.y - (MISSCREENH - self.ballView.bounds.size.height * 0.5)) < 0.000001) {
+    else if (fabs(center.y - (self.parentView.bounds.size.height - self.ballView.bounds.size.height * 0.5)) < 0.000001) {
         // 当前靠近屏幕底边缘
         [UIView animateWithDuration:0.5f animations:^{
             center.y = center.y + config.edgeRetractOffset.y;
@@ -140,12 +132,29 @@
 
 #pragma mark - Public Methods
 
-- (void)visibleBall {
+// 默认显示则显示全局
+- (void)makeVisible {
+    self.centerOffset = CGPointMake([UIScreen mainScreen].bounds.size.width * 0.6, [UIScreen mainScreen].bounds.size.height * 0.6);
+    self.parentView = self.containerVC.view;
+    [self.containerVC.view addSubview:self.ballView];
+    
     [self makeKeyAndVisible];
 }
 
-- (void)disVisibleBall {
-    NSLog(@"disVisibleBall");
+// 显示当前指定视图内悬浮
+- (void)makeVisibleAtView:(UIView *)view {
+    if (view) {
+        self.centerOffset = CGPointMake(view.bounds.size.width * 0.6, view.bounds.size.height * 0.6);
+        self.parentView = view;
+        [view addSubview:self.ballView];
+    }
+    else {
+        [self makeVisible];
+    }
+}
+
+- (void)makeDisVisible {
+    [self setHidden:YES];
 }
 
 - (void)autoEdgeRetractDuration:(NSTimeInterval)duration edgeRetractConfigHander:(MISEdgeRetractConfig (^)())edgeRetractConfigHander {
@@ -153,10 +162,9 @@
         // 只有自动靠近边缘的时候才生效
         self.edgeRetractConfigHander = edgeRetractConfigHander;
         self.autoEdgeOffsetDuration = duration;
+        self.autoEdgeRetract = YES;
         
         [self performSelector:@selector(autoEdgeOffset) withObject:nil afterDelay:duration];
-        
-        self.autoEdgeRetract = YES;
     }
 }
 
@@ -164,7 +172,7 @@
     BOOL notUnknowType = (MISFloatingBallContentTypeCustomView == contentType) || (MISFloatingBallContentTypeImage == contentType) || (MISFloatingBallContentTypeText == contentType);
     NSAssert(notUnknowType, @"can't set ball content with an unknow content type");
     
-     [self.ballCustomView removeFromSuperview];
+    [self.ballCustomView removeFromSuperview];
     if (MISFloatingBallContentTypeImage == contentType) {
         NSAssert([content isKindOfClass:[UIImage class]], @"can't set ball content with a not image content for image type");
         [self.ballLabel setHidden:YES];
@@ -190,8 +198,10 @@
         [self.ballView addSubview:self.ballCustomView];
     }
 }
+
 #pragma mark - GestureRecognizer
 
+// 手势处理
 - (void)panGestureRecognizer:(UIPanGestureRecognizer *)panGesture {
     if (UIGestureRecognizerStateBegan == panGesture.state) {
         [self.ballView setAlpha:1.0f];
@@ -207,8 +217,8 @@
         
         CGFloat   leftMinX = 0.0f;
         CGFloat    topMinY = 0.0f;
-        CGFloat  rightMaxX = MISSCREENW - self.ballView.bounds.size.width;
-        CGFloat bottomMaxY = MISSCREENH - self.ballView.bounds.size.height;
+        CGFloat  rightMaxX = self.parentView.bounds.size.width - self.ballView.bounds.size.width;
+        CGFloat bottomMaxY = self.parentView.bounds.size.height - self.ballView.bounds.size.height;
         
         CGRect frame = self.ballView.frame;
         frame.origin.x = frame.origin.x > rightMaxX ? rightMaxX : frame.origin.x;
@@ -225,15 +235,15 @@
             __block CGPoint center = self.ballView.center;
             // 自动靠近边缘
             if (center.y < (self.ballView.bounds.size.height * 1.5)
-                || (center.y > (MISSCREENH - self.ballView.bounds.size.height * 1.5))) {
+                || (center.y > (self.parentView.bounds.size.height - self.ballView.bounds.size.height * 1.5))) {
                 [UIView animateWithDuration:0.3f animations:^{
-                    center.y = (center.y > MISSCREENH * 0.5) ? (MISSCREENH - self.ballView.bounds.size.height * 0.5) : (self.ballView.bounds.size.height * 0.5);
+                    center.y = (center.y > self.parentView.bounds.size.height * 0.5) ? (self.parentView.bounds.size.height - self.ballView.bounds.size.height * 0.5) : (self.ballView.bounds.size.height * 0.5);
                     self.ballView.center = center;
                 }];
             }
             else {
                 [UIView animateWithDuration:0.3f animations:^{
-                    center.x = (center.x > MISSCREENW * 0.5) ? (MISSCREENW - self.ballView.bounds.size.width * 0.5) : (self.ballView.bounds.size.width * 0.5);
+                    center.x = (center.x > self.parentView.bounds.size.width * 0.5) ? (self.parentView.bounds.size.width - self.ballView.bounds.size.width * 0.5) : (self.ballView.bounds.size.width * 0.5);
                     self.ballView.center = center;
                 }];
             }
@@ -246,6 +256,7 @@
 }
 
 - (void)tapGestureRecognizer:(UIPanGestureRecognizer *)tapGesture {
+    NSLog(@"tap!!");
 }
 
 #pragma mark - Setter / Getter
@@ -260,47 +271,46 @@
     [self.ballLabel setTextColor:textTypeTextColor];
 }
 
-- (void)setOriginPosition:(MISFloatingBallOriginPosition)originPosition {
-    _originPosition = originPosition;
+- (void)setCenterOffset:(CGPoint)centerOffset {
+    _centerOffset = centerOffset;
     
     CGRect frame = self.ballView.frame;
-    switch (originPosition) {
+    switch (self.originPosition) {
         case MISFloatingBallOriginPositionTop:
             frame.origin.y = 0.0f;
-            frame.origin.x = self.centerOffset.x;
+            frame.origin.x = centerOffset.x;
             self.ballView.frame = frame;
             break;
         case MISFloatingBallOriginPositionBottom:
-            frame.origin.y = MISSCREENH - self.ballView.bounds.size.height;
-            frame.origin.x = self.centerOffset.x;
+            frame.origin.y = /*MISSCREENW*/0 - self.ballView.bounds.size.height;
+            frame.origin.x = centerOffset.x;
             self.ballView.frame = frame;
             break;
         case MISFloatingBallOriginPositionLeft:
             frame.origin.x = 0.0f;
-            frame.origin.y = self.centerOffset.y;
+            frame.origin.y = centerOffset.y;
             self.ballView.frame = frame;
         case MISFloatingBallOriginPositionRight:
-            frame.origin.x = MISSCREENW - self.ballView.bounds.size.width;
-            frame.origin.y = self.centerOffset.y;
+            frame.origin.x = /*MISSCREENW*/0 - self.ballView.bounds.size.width;
+            frame.origin.y = centerOffset.y;
             self.ballView.frame = frame;
         default:
             break;
     }
 }
 
+- (void)setOriginPosition:(MISFloatingBallOriginPosition)originPosition {
+    _originPosition = originPosition;
+}
+
 - (UIView *)ballView {
     if (!_ballView) {
-        UIView *ballView = [[UIView alloc] init];
-        ballView.backgroundColor = [UIColor redColor];
-        
+        _ballView = [[UIView alloc] init];
         UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognizer:)];
         UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureRecognizer:)];
         
-        [ballView addGestureRecognizer:tapGesture];
-        [ballView addGestureRecognizer:panGesture];
-        [self.containerVC.view addSubview:ballView];
-        
-        _ballView = ballView;
+        [_ballView addGestureRecognizer:tapGesture];
+        [_ballView addGestureRecognizer:panGesture];
     }
     return _ballView;
 }

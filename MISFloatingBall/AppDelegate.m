@@ -29,7 +29,6 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    self.floatinBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(100, 100, 60, 60)];
 //    self.floatinBall.backgroundColor = [UIColor lightGrayColor];
 //    self.floatinBall.autoCloseEdge = NO;
     
@@ -53,8 +52,6 @@
     [self.floatinBall setBallContent:button3 contentType:MISFloatingBallContentTypeCustomView];
     
     */
-    [self.floatinBall visibleBall];
-    [self.floatinBall setBallContent:[UIImage imageNamed:@"apple"] contentType:MISFloatingBallContentTypeImage];
     [AppDelegateManager shareManager].floatinBall = self.floatinBall;
     
     return YES;
