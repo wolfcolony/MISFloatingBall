@@ -46,6 +46,7 @@
     [self.testView addGestureRecognizer:self.tap];
     
     self.floatinBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(100, 100, 60, 60)];
+    self.floatinBall.edgePolicy = MISFloatingBallEdgePolicyUpDown;
     [self.floatinBall setContent:[UIImage imageNamed:@"apple"] contentType:MISFloatingBallContentTypeImage];
 //    [self.floatinBall autoEdgeRetractDuration:0.0f edgeRetractConfigHander:NULL];
     

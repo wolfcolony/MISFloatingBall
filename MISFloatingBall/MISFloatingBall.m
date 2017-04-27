@@ -99,50 +99,6 @@
         self.ballView.center = center;
         self.ballView.alpha = config.edgeRetractAlpha;
     }];
-
-    
-//    [UIView animateWithDuration:0.5f animations:^{
-//        center.x = fabs(center.x - self.parentView.bounds.size.width  * 0.5) < 0.000001 ? center.x - config.edgeRetractOffset.x : center.x + config.edgeRetractOffset.x;
-//        center.y = fabs(center.y - self.parentView.bounds.size.height * 0.5) < 0.000001 ? center.y - config.edgeRetractOffset.y : center.y + config.edgeRetractOffset.y;
-//        self.ballView.center = center;
-//        self.ballView.alpha = config.edgeRetractAlpha;
-//    }];
-    
-//    if (fabs(center.x - self.parentView.bounds.size.width * 0.5) < 0.000001) {
-//        // 当前靠近屏幕左边缘
-//        [UIView animateWithDuration:0.5f animations:^{
-//            center.x = center.x - config.edgeRetractOffset.x;
-//            self.ballView.center = center;
-//            self.ballView.alpha = config.edgeRetractAlpha;
-//        }];
-//    }
-//    else if (fabs(center.x - self.parentView.bounds.size.width * 0.5) > 0.000001) {
-//        // 当前靠近屏幕右边缘
-//        [UIView animateWithDuration:0.5f animations:^{
-//            center.x = center.x + config.edgeRetractOffset.x;
-//            self.ballView.center = center;
-//            
-//            self.ballView.alpha = config.edgeRetractAlpha;
-//        }];
-//    }
-//    else if (fabs(center.y - self.parentView.bounds.size.height * 0.5) < 0.000001) {
-//        // 当前靠近屏幕上边缘
-//        [UIView animateWithDuration:0.5f animations:^{
-//            center.y = center.y - config.edgeRetractOffset.y;
-//            self.ballView.center = center;
-//            
-//            self.ballView.alpha = config.edgeRetractAlpha;
-//        }];
-//    }
-//    else if (fabs(center.y - self.parentView.bounds.size.height * 0.5) < 0.000001) {
-//        // 当前靠近屏幕底边缘
-//        [UIView animateWithDuration:0.5f animations:^{
-//            center.y = center.y + config.edgeRetractOffset.y;
-//            self.ballView.center = center;
-//            
-//            self.ballView.alpha = config.edgeRetractAlpha;
-//        }];
-//    }
 }
 
 #pragma mark - Public Methods
@@ -246,23 +202,7 @@
         [panGesture setTranslation:CGPointZero inView:self.ballView];
     }
     else if (UIGestureRecognizerStateEnded == panGesture.state) {
-        if (self.isAutoCloseEdge) {
-            __block CGPoint center = self.ballView.center;
-            // 自动靠近边缘
-            if (center.y < (self.ballView.bounds.size.height * 1.5)
-                || (center.y > (self.parentView.bounds.size.height - self.ballView.bounds.size.height * 1.5))) {
-                [UIView animateWithDuration:0.3f animations:^{
-                    center.y = (center.y > self.parentView.bounds.size.height * 0.5) ? (self.parentView.bounds.size.height - self.ballView.bounds.size.height * 0.5) : (self.ballView.bounds.size.height * 0.5);
-                    self.ballView.center = center;
-                }];
-            }
-            else {
-                [UIView animateWithDuration:0.3f animations:^{
-                    center.x = (center.x > self.parentView.bounds.size.width * 0.5) ? (self.parentView.bounds.size.width - self.ballView.bounds.size.width * 0.5) : (self.ballView.bounds.size.width * 0.5);
-                    self.ballView.center = center;
-                }];
-            }
-        }
+        self.autoCloseEdge = self.isAutoCloseEdge;
         
         if (self.isAutoEdgeRetract) {
             [self performSelector:@selector(autoEdgeOffset) withObject:nil afterDelay:self.autoEdgeOffsetDuration];
