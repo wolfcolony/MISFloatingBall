@@ -26,6 +26,8 @@
 @property (nonatomic, strong) UIView *parentView;
 @end
 
+static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePolicyAllEdge下，悬浮球到达一个界限开始自动靠近上下边缘
+
 @implementation MISFloatingBall
 
 #pragma mark - Life Cycle
@@ -67,7 +69,7 @@
 #pragma mark - Private
 
 - (void)autoEdgeOffset {
-    MISEdgeRetractConfig config = self.edgeRetractConfigHander ? self.edgeRetractConfigHander() : MISEdgeOffsetConfigMake(CGPointMake(self.ballView.bounds.size.width * 0.5, self.ballView.bounds.size.height * 0.5), 0.8);
+    MISEdgeRetractConfig config = self.edgeRetractConfigHander ? self.edgeRetractConfigHander() : MISEdgeOffsetConfigMake(CGPointMake(self.ballView.bounds.size.width * 0.3, self.ballView.bounds.size.height * 0.3), 0.8);
     
     __block CGPoint center = self.ballView.center;
     
@@ -85,10 +87,10 @@
             center.y = (center.y < self.parentView.bounds.size.height * 0.5) ? (ballHalfH - config.edgeRetractOffset.y) : (parentViewH + config.edgeRetractOffset.y - ballHalfH);
         }
         else if (MISFloatingBallEdgePolicyAllEdge == self.edgePolicy) {
-            if (center.y < ballHalfH * 1.5) {
+            if (center.y < minUpDownLimits) {
                 center.y = ballHalfH - config.edgeRetractOffset.y;
             }
-            else if (center.y > parentViewH - ballHalfH * 1.5) {
+            else if (center.y > parentViewH - minUpDownLimits) {
                 center.y = parentViewH + config.edgeRetractOffset.y - ballHalfH;
             }
             else {
@@ -202,11 +204,7 @@
         [panGesture setTranslation:CGPointZero inView:self.ballView];
     }
     else if (UIGestureRecognizerStateEnded == panGesture.state) {
-        self.autoCloseEdge = self.isAutoCloseEdge;
-        
-        if (self.isAutoEdgeRetract) {
-            [self performSelector:@selector(autoEdgeOffset) withObject:nil afterDelay:self.autoEdgeOffsetDuration];
-        }
+        self.isAutoEdgeRetract ? [self performSelector:@selector(autoEdgeOffset) withObject:nil afterDelay:self.autoEdgeOffsetDuration] : [self setAutoCloseEdge:self.isAutoCloseEdge];
     }
 }
 
