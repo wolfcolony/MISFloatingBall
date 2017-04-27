@@ -28,12 +28,18 @@
 
 static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePolicyAllEdge下，悬浮球到达一个界限开始自动靠近上下边缘
 
+#ifdef DEBUG
+#define MISLog(format, ...) NSLog(format, ## __VA_ARGS__)
+#else
+#define MISLog(format, ...)
+#endif
+
 @implementation MISFloatingBall
 
 #pragma mark - Life Cycle
 
 - (void)dealloc {
-    NSLog(@"MISFloatingBall dealloc");
+    MISLog(@"MISFloatingBall dealloc");
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
