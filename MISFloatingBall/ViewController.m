@@ -45,20 +45,15 @@
     [self.testView addGestureRecognizer:self.pan];
     [self.testView addGestureRecognizer:self.tap];
     
-    self.floatinBall = [[MISFloatingBall alloc] initFloatingBallWithSize:CGSizeMake(44, 44) originPosition:MISFloatingBallOriginPositionRight];
     self.floatinBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(100, 100, 60, 60)];
-    [self.floatinBall setBallContent:[UIImage imageNamed:@"apple"] contentType:MISFloatingBallContentTypeImage];
-    
-    [self.floatinBall autoEdgeRetractDuration:0.0f edgeRetractConfigHander:NULL];
+    [self.floatinBall setContent:[UIImage imageNamed:@"apple"] contentType:MISFloatingBallContentTypeImage];
+//    [self.floatinBall autoEdgeRetractDuration:0.0f edgeRetractConfigHander:NULL];
     
     [self.floatinBall makeVisibleAtView:self.view];
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [super touchesBegan:touches withEvent:event];
-    
-//    TwoViewController *twoVC = [[TwoViewController alloc] init];
-//    [self.navigationController pushViewController:twoVC animated:YES];
 }
 
 - (void)pan:(UIPanGestureRecognizer *)pan {

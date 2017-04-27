@@ -27,7 +27,6 @@
 @end
 
 @implementation MISFloatingBall
-@synthesize originPosition = _originPosition;
 
 #pragma mark - Life Cycle
 
@@ -35,28 +34,10 @@
     NSLog(@"MISFloatingBall dealloc");
 }
 
-- (instancetype)init {
-    return [self initFloatingBallWithSize:CGSizeMake(44, 44) originPosition:MISFloatingBallOriginPositionRight];
-}
-
-- (instancetype)initFloatingBallWithOriginPosition:(MISFloatingBallOriginPosition)originPosition {
-    return [self initFloatingBallWithSize:CGSizeMake(44, 44) originPosition:originPosition];
-}
-
-- (instancetype)initFloatingBallWithSize:(CGSize)ballSize originPosition:(MISFloatingBallOriginPosition)originPosition {
-    self = [self initWithFrame:[UIScreen mainScreen].bounds];
-    if (self) {
-        self.ballFrame = CGRectMake(0, 0, ballSize.width, ballSize.height);
-        self.originPosition = originPosition;
-    }
-    return self;
-}
-
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:[UIScreen mainScreen].bounds];
     if (self) {
         self.ballFrame = frame;
-        
         [self initialize];
     }
     return self;
@@ -68,14 +49,12 @@
     self.backgroundColor = [UIColor clearColor];
     self.autoCloseEdge = YES;   // 自动靠边
     self.autoEdgeRetract = NO;  // 自动缩进
-    
     self.containerVC = [[UIViewController alloc] init];
-    self.rootViewController = self.containerVC;
     self.rootViewController.view.backgroundColor = [UIColor clearColor];
-}
-
-- (void)setFrame:(CGRect)frame {
-    [super setFrame:frame];
+    self.rootViewController = self.containerVC;
+    
+    // 默认上下左右
+    self.edgePolicy = MISFloatingBallEdgePolicyAllEdge;
 }
 
 #pragma mark - HitTest Event
@@ -92,42 +71,78 @@
     
     __block CGPoint center = self.ballView.center;
     
-    if (fabs(center.x - self.ballView.bounds.size.width * 0.5) < 0.000001) {
-        // 当前靠近屏幕左边缘
-        [UIView animateWithDuration:0.5f animations:^{
-            center.x = center.x - config.edgeRetractOffset.x;
-            self.ballView.center = center;
-            
-            self.ballView.alpha = config.edgeRetractAlpha;
-        }];
-    }
-    else if (fabs(center.x - (self.parentView.bounds.size.width - self.ballView.bounds.size.width * 0.5)) < 0.000001) {
-        // 当前靠近屏幕右边缘
-        [UIView animateWithDuration:0.5f animations:^{
-            center.x = center.x + config.edgeRetractOffset.x;
-            self.ballView.center = center;
-            
-            self.ballView.alpha = config.edgeRetractAlpha;
-        }];
-    }
-    else if (fabs(center.y - self.ballView.bounds.size.height * 0.5) < 0.000001) {
-        // 当前靠近屏幕上边缘
-        [UIView animateWithDuration:0.5f animations:^{
-            center.y = center.y - config.edgeRetractOffset.y;
-            self.ballView.center = center;
-            
-            self.ballView.alpha = config.edgeRetractAlpha;
-        }];
-    }
-    else if (fabs(center.y - (self.parentView.bounds.size.height - self.ballView.bounds.size.height * 0.5)) < 0.000001) {
-        // 当前靠近屏幕底边缘
-        [UIView animateWithDuration:0.5f animations:^{
-            center.y = center.y + config.edgeRetractOffset.y;
-            self.ballView.center = center;
-            
-            self.ballView.alpha = config.edgeRetractAlpha;
-        }];
-    }
+    CGFloat ballHalfW   = self.ballView.bounds.size.width * 0.5;
+    CGFloat ballHalfH   = self.ballView.bounds.size.height * 0.5;
+    CGFloat parentViewW = self.parentView.bounds.size.width;
+    CGFloat parentViewH = self.parentView.bounds.size.height;
+    
+    [UIView animateWithDuration:0.5f animations:^{
+        if (MISFloatingBallEdgePolicyLeftRight == self.edgePolicy) {
+            // 左右
+            center.x = (center.x < self.parentView.bounds.size.width  * 0.5) ? (ballHalfW - config.edgeRetractOffset.x) : (parentViewW + config.edgeRetractOffset.x - ballHalfW);
+        }
+        else if (MISFloatingBallEdgePolicyUpDown == self.edgePolicy) {
+            center.y = (center.y < self.parentView.bounds.size.height * 0.5) ? (ballHalfH - config.edgeRetractOffset.y) : (parentViewH + config.edgeRetractOffset.y - ballHalfH);
+        }
+        else if (MISFloatingBallEdgePolicyAllEdge == self.edgePolicy) {
+            if (center.y < ballHalfH * 1.5) {
+                center.y = ballHalfH - config.edgeRetractOffset.y;
+            }
+            else if (center.y > parentViewH - ballHalfH * 1.5) {
+                center.y = parentViewH + config.edgeRetractOffset.y - ballHalfH;
+            }
+            else {
+                center.x = (center.x < self.parentView.bounds.size.width  * 0.5) ? (ballHalfW - config.edgeRetractOffset.x) : (parentViewW + config.edgeRetractOffset.x - ballHalfW);
+            }
+        }
+        
+        self.ballView.center = center;
+        self.ballView.alpha = config.edgeRetractAlpha;
+    }];
+
+    
+//    [UIView animateWithDuration:0.5f animations:^{
+//        center.x = fabs(center.x - self.parentView.bounds.size.width  * 0.5) < 0.000001 ? center.x - config.edgeRetractOffset.x : center.x + config.edgeRetractOffset.x;
+//        center.y = fabs(center.y - self.parentView.bounds.size.height * 0.5) < 0.000001 ? center.y - config.edgeRetractOffset.y : center.y + config.edgeRetractOffset.y;
+//        self.ballView.center = center;
+//        self.ballView.alpha = config.edgeRetractAlpha;
+//    }];
+    
+//    if (fabs(center.x - self.parentView.bounds.size.width * 0.5) < 0.000001) {
+//        // 当前靠近屏幕左边缘
+//        [UIView animateWithDuration:0.5f animations:^{
+//            center.x = center.x - config.edgeRetractOffset.x;
+//            self.ballView.center = center;
+//            self.ballView.alpha = config.edgeRetractAlpha;
+//        }];
+//    }
+//    else if (fabs(center.x - self.parentView.bounds.size.width * 0.5) > 0.000001) {
+//        // 当前靠近屏幕右边缘
+//        [UIView animateWithDuration:0.5f animations:^{
+//            center.x = center.x + config.edgeRetractOffset.x;
+//            self.ballView.center = center;
+//            
+//            self.ballView.alpha = config.edgeRetractAlpha;
+//        }];
+//    }
+//    else if (fabs(center.y - self.parentView.bounds.size.height * 0.5) < 0.000001) {
+//        // 当前靠近屏幕上边缘
+//        [UIView animateWithDuration:0.5f animations:^{
+//            center.y = center.y - config.edgeRetractOffset.y;
+//            self.ballView.center = center;
+//            
+//            self.ballView.alpha = config.edgeRetractAlpha;
+//        }];
+//    }
+//    else if (fabs(center.y - self.parentView.bounds.size.height * 0.5) < 0.000001) {
+//        // 当前靠近屏幕底边缘
+//        [UIView animateWithDuration:0.5f animations:^{
+//            center.y = center.y + config.edgeRetractOffset.y;
+//            self.ballView.center = center;
+//            
+//            self.ballView.alpha = config.edgeRetractAlpha;
+//        }];
+//    }
 }
 
 #pragma mark - Public Methods
@@ -168,7 +183,7 @@
     }
 }
 
-- (void)setBallContent:(id)content contentType:(MISFloatingBallContentType)contentType {
+- (void)setContent:(id)content contentType:(MISFloatingBallContentType)contentType {
     BOOL notUnknowType = (MISFloatingBallContentTypeCustomView == contentType) || (MISFloatingBallContentTypeImage == contentType) || (MISFloatingBallContentTypeText == contentType);
     NSAssert(notUnknowType, @"can't set ball content with an unknow content type");
     
@@ -261,6 +276,16 @@
 
 #pragma mark - Setter / Getter
 
+- (void)setAutoCloseEdge:(BOOL)autoCloseEdge {
+    _autoCloseEdge = autoCloseEdge;
+    
+    if (autoCloseEdge) {
+        [self autoEdgeRetractDuration:0.0f edgeRetractConfigHander:^MISEdgeRetractConfig{
+            return MISEdgeOffsetConfigMake(CGPointZero, 1.0f);
+        }];
+    }
+}
+
 - (void)setBallFrame:(CGRect)ballFrame {
     self.ballView.frame = ballFrame;
 }
@@ -269,38 +294,6 @@
     _textTypeTextColor = textTypeTextColor;
     
     [self.ballLabel setTextColor:textTypeTextColor];
-}
-
-- (void)setCenterOffset:(CGPoint)centerOffset {
-    _centerOffset = centerOffset;
-    
-    CGRect frame = self.ballView.frame;
-    switch (self.originPosition) {
-        case MISFloatingBallOriginPositionTop:
-            frame.origin.y = 0.0f;
-            frame.origin.x = centerOffset.x;
-            self.ballView.frame = frame;
-            break;
-        case MISFloatingBallOriginPositionBottom:
-            frame.origin.y = /*MISSCREENW*/0 - self.ballView.bounds.size.height;
-            frame.origin.x = centerOffset.x;
-            self.ballView.frame = frame;
-            break;
-        case MISFloatingBallOriginPositionLeft:
-            frame.origin.x = 0.0f;
-            frame.origin.y = centerOffset.y;
-            self.ballView.frame = frame;
-        case MISFloatingBallOriginPositionRight:
-            frame.origin.x = /*MISSCREENW*/0 - self.ballView.bounds.size.width;
-            frame.origin.y = centerOffset.y;
-            self.ballView.frame = frame;
-        default:
-            break;
-    }
-}
-
-- (void)setOriginPosition:(MISFloatingBallOriginPosition)originPosition {
-    _originPosition = originPosition;
 }
 
 - (UIView *)ballView {

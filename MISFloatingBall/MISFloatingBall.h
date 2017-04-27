@@ -10,11 +10,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSUInteger, MISFloatingBallOriginPosition) {
-    MISFloatingBallOriginPositionTop = 0,
-    MISFloatingBallOriginPositionBottom,
-    MISFloatingBallOriginPositionLeft,
-    MISFloatingBallOriginPositionRight,
+/**< 靠边策略(默认所有边框均可停靠) */
+typedef NS_ENUM(NSUInteger, MISFloatingBallEdgePolicy) {
+    MISFloatingBallEdgePolicyAllEdge = 0,    /**< 所有边框都可
+                                             (符合正常使用习惯，滑到某一位置时候才上下停靠，参见系统的assistiveTouch) */
+    MISFloatingBallEdgePolicyLeftRight,      /**< 只能左右停靠 */
+    MISFloatingBallEdgePolicyUpDown,         /**< 只能上下停靠 */
 };
 
 typedef NS_ENUM(NSUInteger, MISFloatingBallContentType) {
@@ -34,8 +35,10 @@ UIKIT_STATIC_INLINE MISEdgeRetractConfig MISEdgeOffsetConfigMake(CGPoint edgeRet
 }
 
 @interface MISFloatingBall : UIWindow
-- (instancetype)initFloatingBallWithSize:(CGSize)ballSize
-                          originPosition:(MISFloatingBallOriginPosition)originPosition;
+/**
+ 靠边策略
+ */
+@property (nonatomic, assign) MISFloatingBallEdgePolicy edgePolicy;
 
 /**
  显示悬浮球（默认全局，整个APP可用）
@@ -54,7 +57,9 @@ UIKIT_STATIC_INLINE MISEdgeRetractConfig MISEdgeOffsetConfigMake(CGPoint edgeRet
  */
 - (void)makeDisVisible;
 
-@property (nonatomic, assign, readonly) MISFloatingBallOriginPosition originPosition;
+/**
+ 是否自动靠边
+ */
 @property (nonatomic, assign, getter=isAutoCloseEdge) BOOL autoCloseEdge;
 
 /**
@@ -71,7 +76,7 @@ UIKIT_STATIC_INLINE MISEdgeRetractConfig MISEdgeOffsetConfigMake(CGPoint edgeRet
  @param content 内容
  @param contentType 内容类型（存在三种文字，图片，和自定义传入视图）
  */
-- (void)setBallContent:(id)content contentType:(MISFloatingBallContentType)contentType;
+- (void)setContent:(id)content contentType:(MISFloatingBallContentType)contentType;
 
 // 文字颜色
 @property (nonatomic, strong) UIColor *textTypeTextColor;
