@@ -13,6 +13,7 @@
 
 @interface DemoWindow : UIWindow
 
+
 @end
 
 @implementation DemoWindow
@@ -24,6 +25,7 @@
 
 
 @interface ViewController ()
+@property (nonatomic, strong) MISFloatingBall *floatingBall;
 @end
 
 @implementation ViewController
@@ -35,13 +37,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    MISFloatingBall *floatingBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(100, 100, 60, 60)];
-    [floatingBall setContent:[UIImage imageNamed:@"apple"] contentType:MISFloatingBallContentTypeImage];
-//    [floatingBall makeVisibleAtView:self.view];
-    [floatingBall makeVisible];
-//    self.floatinBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(100, 100, 60, 60)];
-//    [self.floatinBall setContent:[UIImage imageNamed:@"apple"] contentType:MISFloatingBallContentTypeImage];
-//    [self.floatinBall autoEdgeRetractDuration:0.0f edgeRetractConfigHander:NULL];
-//    [self.floatinBall makeVisibleAtView:self.view];
+    self.floatingBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(100, 100, 60, 60)];
+    self.floatingBall.frame = CGRectMake(30, 30, 44, 44);
+    [self.floatingBall setContent:[UIImage imageNamed:@"apple"] contentType:MISFloatingBallContentTypeImage];
+    [self.floatingBall makeVisible];
 }
 @end

@@ -81,4 +81,10 @@ UIKIT_STATIC_INLINE MISEdgeRetractConfig MISEdgeOffsetConfigMake(CGPoint edgeRet
 // 文字颜色
 @property (nonatomic, strong) UIColor *textTypeTextColor;
 @end
+
+@protocol MISFloatingBallDelegate <NSObject>
+@optional
+- (void)floatingBallClick:(MISFloatingBall *)ball;
+
+@end
 NS_ASSUME_NONNULL_END

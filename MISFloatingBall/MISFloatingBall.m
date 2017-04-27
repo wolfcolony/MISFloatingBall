@@ -116,7 +116,6 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
     self.centerOffset = CGPointMake([UIScreen mainScreen].bounds.size.width * 0.6, [UIScreen mainScreen].bounds.size.height * 0.6);
     self.parentView = self.containerVC.view;
     [self.containerVC.view addSubview:self.ballView];
-    
     [self makeKeyAndVisible];
 }
 
@@ -215,10 +214,16 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
 }
 
 - (void)tapGestureRecognizer:(UIPanGestureRecognizer *)tapGesture {
-    NSLog(@"tap!!");
+    MISLog(@"tap!!");
 }
 
 #pragma mark - Setter / Getter
+
+- (void)setFrame:(CGRect)frame {
+    [super setFrame:[UIScreen mainScreen].bounds];
+    
+    [self.ballView setFrame:frame];
+}
 
 - (void)setAutoCloseEdge:(BOOL)autoCloseEdge {
     _autoCloseEdge = autoCloseEdge;
