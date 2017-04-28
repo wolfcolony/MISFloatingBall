@@ -40,6 +40,6 @@
     self.floatingBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(100, 100, 60, 60)];
     self.floatingBall.frame = CGRectMake(30, 30, 44, 44);
     [self.floatingBall setContent:[UIImage imageNamed:@"apple"] contentType:MISFloatingBallContentTypeImage];
-    [self.floatingBall makeVisible];
+    [self.floatingBall visibleGlobally];
 }
 @end

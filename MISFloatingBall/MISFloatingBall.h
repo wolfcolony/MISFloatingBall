@@ -34,7 +34,7 @@ UIKIT_STATIC_INLINE MISEdgeRetractConfig MISEdgeOffsetConfigMake(CGPoint edgeRet
     return config;
 }
 
-@interface MISFloatingBall : UIWindow
+@interface MISFloatingBall : UIView
 /**
  靠边策略
  */
@@ -43,19 +43,19 @@ UIKIT_STATIC_INLINE MISEdgeRetractConfig MISEdgeOffsetConfigMake(CGPoint edgeRet
 /**
  显示悬浮球（默认全局，整个APP可用）
  */
-- (void)makeVisible;
+- (void)visibleGlobally;
 
 /**
  显示悬浮球，指定View内生效
 
  @param view 指定的View
  */
-- (void)makeVisibleAtView:(UIView *)view;
+- (void)visibleSpecifiedView:(UIView *)view;
 
 /**
  隐藏悬浮球
  */
-- (void)makeDisVisible;
+- (void)disVisible;
 
 /**
  是否自动靠边
@@ -85,6 +85,5 @@ UIKIT_STATIC_INLINE MISEdgeRetractConfig MISEdgeOffsetConfigMake(CGPoint edgeRet
 @protocol MISFloatingBallDelegate <NSObject>
 @optional
 - (void)floatingBallClick:(MISFloatingBall *)ball;
-
 @end
 NS_ASSUME_NONNULL_END
