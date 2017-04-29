@@ -96,7 +96,7 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
 
 - (void)initialize {
     self.backgroundColor = [UIColor clearColor];
-    self.autoCloseEdge = YES;   // 自动靠边
+    self.autoCloseEdge = NO;   // 自动靠边
     self.autoEdgeRetract = NO;  // 自动缩进
     self.edgePolicy = MISFloatingBallEdgePolicyAllEdge;
     [self setHidden:YES];
