@@ -84,17 +84,11 @@
     
     if ([MISFloatingBallManager shareManager].canRuntime) {
         if ([[MISFloatingBallManager shareManager].superView isEqual:self]) {
-            __block MISFloatingBall *findBall = nil;
             [self.subviews enumerateObjectsUsingBlock:^(UIView * obj, NSUInteger idx, BOOL * _Nonnull stop) {
                 if ([obj isKindOfClass:[MISFloatingBall class]]) {
-                    findBall = (MISFloatingBall *)obj;
-                    *stop = YES;
+                    [self insertSubview:subview belowSubview:(MISFloatingBall *)obj];
                 }
             }];
-            
-            if (findBall) {
-                [self insertSubview:subview belowSubview:findBall];
-            }
         }
     }
 }

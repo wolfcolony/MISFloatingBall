@@ -23,6 +23,10 @@
     self.view.backgroundColor = [UIColor whiteColor];
 
     
+    UIView *view0 = [[UIView alloc] initWithFrame:CGRectMake(0, 100, 100, 100)];
+    view0.backgroundColor = [UIColor lightGrayColor];
+    [self.view addSubview:view0];
+    
     MISFloatingBall *floatingBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(100, 100, 100, 100) inSpecifiedView:self.view];
     
     floatingBall.backgroundColor = [UIColor orangeColor];
@@ -55,6 +59,10 @@
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [super touchesBegan:touches withEvent:event];
+    
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(100, 100, 100, 100)];
+    view.backgroundColor = [UIColor redColor];
+    [self.view addSubview:view];
 }
 
 @end
