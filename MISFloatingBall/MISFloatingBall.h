@@ -38,19 +38,29 @@ UIKIT_STATIC_INLINE MISEdgeRetractConfig MISEdgeOffsetConfigMake(CGPoint edgeRet
 /**
  靠边策略
  */
-@property (nonatomic, assign) MISFloatingBallEdgePolicy edgePolicy;
+@property (nonatomic, assign) MISFloatingBallEdgePolicy edgePolicy; 
 
 /**
- 显示悬浮球（默认全局，整个APP可用）
+ 默认创建一个悬浮球（没有存在指定需要显示的view，默认为全局显示的悬浮球，跨vc生效）
+
+ @param frame 尺寸
+ @return 悬浮球
  */
-- (void)visibleGlobally;
+- (instancetype)initWithFrame:(CGRect)frame;
 
 /**
- 显示悬浮球，指定View内生效
+ 初始化悬浮球（只会在当前指定的view内生效）
 
- @param view 指定的View
+ @param frame 尺寸
+ @param specifiedView 将要显示所在的view
+ @return 悬浮球
  */
-- (void)visibleSpecifiedView:(UIView *)view;
+- (instancetype)initWithFrame:(CGRect)frame inSpecifiedView:(UIView *)specifiedView;
+
+/**
+ 显示悬浮球
+ */
+- (void)visible;
 
 /**
  隐藏悬浮球

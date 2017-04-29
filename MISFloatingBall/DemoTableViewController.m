@@ -51,7 +51,7 @@
     MISFloatingBall *floatingBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(20, 20, 60, 60)];
     floatingBall.backgroundColor = [UIColor redColor];
     [floatingBall setContent:[UIImage imageNamed:@"apple"] contentType:MISFloatingBallContentTypeImage];
-    [floatingBall visibleGlobally];
+    [floatingBall visible];
 }
 
 - (void)ballTitle {

@@ -69,11 +69,27 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
     MISLog(@"MISFloatingBall dealloc");
 }
 
+- (instancetype)init {
+    return [self initWithFrame:CGRectMake(0, 0, 44, 44)];
+}
+
+- (instancetype)initWithFrame:(CGRect)frame inSpecifiedView:(UIView *)specifiedView {
+    self = [super initWithFrame:frame];
+    
+    if (self) {
+        [self initialize];
+        [self addGestureRecognizer];
+        [self setupSpecifiedView:specifiedView];
+    }
+    return self;
+}
+
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
         [self initialize];
         [self addGestureRecognizer];
+        [self setupGlobally];
     }
     return self;
 }
@@ -82,9 +98,27 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
     self.backgroundColor = [UIColor clearColor];
     self.autoCloseEdge = YES;   // 自动靠边
     self.autoEdgeRetract = NO;  // 自动缩进
-    
-    // 默认上下左右
     self.edgePolicy = MISFloatingBallEdgePolicyAllEdge;
+    [self setHidden:YES];
+}
+
+- (void)setupSpecifiedView:(UIView *)specifiedView; {
+    [specifiedView addSubview:self];
+    self.parentView = specifiedView;
+    self.centerOffset = CGPointMake(specifiedView.bounds.size.width * 0.6, specifiedView.bounds.size.height * 0.6);
+}
+
+- (void)setupGlobally {
+    self.window = [[MISFloatingBallWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    self.window.windowLevel = UIWindowLevelStatusBar + 100;
+    self.window.rootViewController = [UIViewController new];//self.rootVC;
+    self.window.rootViewController.view.backgroundColor = [UIColor clearColor];
+    self.window.rootViewController.view.userInteractionEnabled = NO;
+    self.parentView = self.window;
+    [self.window addSubview:self];
+    [self.window makeKeyAndVisible];
+    
+    self.centerOffset = CGPointMake(self.parentView.bounds.size.width * 0.6, self.parentView.bounds.size.height * 0.6);
 }
 
 #pragma mark - Private
@@ -126,38 +160,12 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
 
 #pragma mark - Public Methods
 
-// 默认显示则显示全局
-- (void)visibleGlobally {
-    // window
-    self.window = [[MISFloatingBallWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    self.window.windowLevel = UIWindowLevelStatusBar + 100;
-    self.window.rootViewController = [UIViewController new];//self.rootVC;
-    self.window.rootViewController.view.backgroundColor = [UIColor clearColor];
-    self.window.rootViewController.view.userInteractionEnabled = NO;
-    
-    [self.window addSubview:self];
-    [self.window makeKeyAndVisible];
-    
-    self.parentView = self.window;
-    self.centerOffset = CGPointMake(self.parentView.bounds.size.width * 0.6, self.parentView.bounds.size.height * 0.6);
-}
-
-// 显示当前指定视图内悬浮
-- (void)visibleSpecifiedView:(UIView *)view {
-    if (view) {
-        [view addSubview:self];
-        
-        self.parentView = view;
-        self.centerOffset = CGPointMake(view.bounds.size.width * 0.6, view.bounds.size.height * 0.6);
-    }
-    else {
-        [self visibleGlobally];
-    }
+- (void)visible {
+    [self setHidden:NO];
 }
 
 - (void)disVisible {
     [self setHidden:YES];
-    [self removeFromSuperview];
 }
 
 - (void)autoEdgeRetractDuration:(NSTimeInterval)duration edgeRetractConfigHander:(MISEdgeRetractConfig (^)())edgeRetractConfigHander {

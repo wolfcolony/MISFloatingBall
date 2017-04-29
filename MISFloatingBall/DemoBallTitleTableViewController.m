@@ -32,7 +32,7 @@
     [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     
     self.floatingBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(0, 0, 100, 60)];
-    [self.floatingBall visibleGlobally];
+    [self.floatingBall visible];
 }
 
 - (NSMutableArray *)imageDatas {
