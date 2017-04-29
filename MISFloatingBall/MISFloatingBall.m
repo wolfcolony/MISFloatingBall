@@ -123,39 +123,54 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
 
 #pragma mark - Private
 
+// 靠边
+- (void)autoCloseEdge {
+    [UIView animateWithDuration:0.5f animations:^{
+        // center
+        self.center = [self calculatePoisitionWithEndOffset:CGPointZero];//center;
+    } completion:^(BOOL finished) {
+        // 靠边之后自动缩进边缘处
+        if (self.isAutoEdgeRetract) {
+            [self performSelector:@selector(autoEdgeOffset) withObject:nil afterDelay:self.autoEdgeOffsetDuration];
+        }
+    }];
+}
+
 - (void)autoEdgeOffset {
     MISEdgeRetractConfig config = self.edgeRetractConfigHander ? self.edgeRetractConfigHander() : MISEdgeOffsetConfigMake(CGPointMake(self.bounds.size.width * 0.3, self.bounds.size.height * 0.3), 0.8);
     
-    __block CGPoint center = self.center;
-    
+    [UIView animateWithDuration:0.5f animations:^{
+        self.center = [self calculatePoisitionWithEndOffset:config.edgeRetractOffset];
+        self.alpha = config.edgeRetractAlpha;
+    }];
+}
+
+- (CGPoint)calculatePoisitionWithEndOffset:(CGPoint)offset {
     CGFloat ballHalfW   = self.bounds.size.width * 0.5;
     CGFloat ballHalfH   = self.bounds.size.height * 0.5;
     CGFloat parentViewW = self.parentView.bounds.size.width;
     CGFloat parentViewH = self.parentView.bounds.size.height;
+    CGPoint center = self.center;
     
-    [UIView animateWithDuration:0.5f animations:^{
-        if (MISFloatingBallEdgePolicyLeftRight == self.edgePolicy) {
-            // 左右
-            center.x = (center.x < self.parentView.bounds.size.width  * 0.5) ? (ballHalfW - config.edgeRetractOffset.x) : (parentViewW + config.edgeRetractOffset.x - ballHalfW);
+    if (MISFloatingBallEdgePolicyLeftRight == self.edgePolicy) {
+        // 左右
+        center.x = (center.x < self.parentView.bounds.size.width  * 0.5) ? (ballHalfW - offset.x) : (parentViewW + offset.x - ballHalfW);
+    }
+    else if (MISFloatingBallEdgePolicyUpDown == self.edgePolicy) {
+        center.y = (center.y < self.parentView.bounds.size.height * 0.5) ? (ballHalfH - offset.y) : (parentViewH + offset.y - ballHalfH);
+    }
+    else if (MISFloatingBallEdgePolicyAllEdge == self.edgePolicy) {
+        if (center.y < minUpDownLimits) {
+            center.y = ballHalfH - offset.y;
         }
-        else if (MISFloatingBallEdgePolicyUpDown == self.edgePolicy) {
-            center.y = (center.y < self.parentView.bounds.size.height * 0.5) ? (ballHalfH - config.edgeRetractOffset.y) : (parentViewH + config.edgeRetractOffset.y - ballHalfH);
+        else if (center.y > parentViewH - minUpDownLimits) {
+            center.y = parentViewH + offset.y - ballHalfH;
         }
-        else if (MISFloatingBallEdgePolicyAllEdge == self.edgePolicy) {
-            if (center.y < minUpDownLimits) {
-                center.y = ballHalfH - config.edgeRetractOffset.y;
-            }
-            else if (center.y > parentViewH - minUpDownLimits) {
-                center.y = parentViewH + config.edgeRetractOffset.y - ballHalfH;
-            }
-            else {
-                center.x = (center.x < self.parentView.bounds.size.width  * 0.5) ? (ballHalfW - config.edgeRetractOffset.x) : (parentViewW + config.edgeRetractOffset.x - ballHalfW);
-            }
+        else {
+            center.x = (center.x < self.parentView.bounds.size.width  * 0.5) ? (ballHalfW - offset.x) : (parentViewW + offset.x - ballHalfW);
         }
-        
-        self.center = center;
-        self.alpha = config.edgeRetractAlpha;
-    }];
+    }
+    return center;
 }
 
 #pragma mark - Public Methods
@@ -174,8 +189,6 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
         self.edgeRetractConfigHander = edgeRetractConfigHander;
         self.autoEdgeOffsetDuration = duration;
         self.autoEdgeRetract = YES;
-        
-        [self performSelector:@selector(autoEdgeOffset) withObject:nil afterDelay:duration];
     }
 }
 
@@ -230,7 +243,6 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
 - (void)panGestureRecognizer:(UIPanGestureRecognizer *)panGesture {
     if (UIGestureRecognizerStateBegan == panGesture.state) {
         [self setAlpha:1.0f];
-        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(autoEdgeOffset) object:nil];
     }
     else if (UIGestureRecognizerStateChanged == panGesture.state) {
         CGPoint translation = [panGesture translationInView:self];
@@ -256,7 +268,12 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
         [panGesture setTranslation:CGPointZero inView:self];
     }
     else if (UIGestureRecognizerStateEnded == panGesture.state) {
-        self.isAutoEdgeRetract ? [self performSelector:@selector(autoEdgeOffset) withObject:nil afterDelay:self.autoEdgeOffsetDuration] : [self setAutoCloseEdge:self.isAutoCloseEdge];
+        if (self.isAutoCloseEdge) {
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                // 0.2s 之后靠边
+                [self autoCloseEdge];
+            });
+        }
     }
 }
 
@@ -272,9 +289,7 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
     _autoCloseEdge = autoCloseEdge;
     
     if (autoCloseEdge) {
-        [self autoEdgeRetractDuration:0.0f edgeRetractConfigHander:^MISEdgeRetractConfig{
-            return MISEdgeOffsetConfigMake(CGPointZero, 1.0f);
-        }];
+        [self autoCloseEdge];
     }
 }
 
