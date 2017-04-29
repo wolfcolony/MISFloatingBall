@@ -41,6 +41,20 @@
             [weakSelf presentViewController:vc animated:YES completion:NULL];
         }
     }];
+    
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(100, 100, 100, 100)];
+    view.backgroundColor = [UIColor redColor];
+    [self.view addSubview:view];
+    
+    
+    UIView *view2 = [[UIView alloc] initWithFrame:CGRectMake(150, 100, 100, 100)];
+    view2.backgroundColor = [UIColor blueColor];
+    [self.view addSubview:view2];
+}
+
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [super touchesBegan:touches withEvent:event];
 }
 
 @end

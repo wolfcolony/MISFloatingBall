@@ -7,6 +7,9 @@
 //
 
 #import "MISFloatingBall.h"
+#include <objc/runtime.h>
+
+#pragma mark - MISFloatingBallWindow
 
 @interface MISFloatingBallWindow : UIWindow
 
@@ -31,8 +34,74 @@
     
     return NO;
 }
+@end
+
+#pragma mark - MISFloatingBallManager
+
+@interface MISFloatingBallManager : NSObject
+@property (nonatomic, assign) BOOL canRuntime;
+@property (nonatomic,   weak) UIView *superView;
+@end
+
+@implementation MISFloatingBallManager
+
++ (instancetype)shareManager {
+    static MISFloatingBallManager *ballMgr = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        ballMgr = [[MISFloatingBallManager alloc] init];
+    });
+    
+    return ballMgr;
+}
+
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.canRuntime = NO;
+    }
+    return self;
+}
+@end
+
+#pragma mark - UIView (MISAddSubview)
+
+@interface UIView (MISAddSubview)
 
 @end
+
+@implementation UIView (MISAddSubview)
+
++ (void)load {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        method_exchangeImplementations(class_getInstanceMethod(self, @selector(addSubview:)), class_getInstanceMethod(self, @selector(mis_addSubview:)));
+    });
+}
+
+- (void)mis_addSubview:(UIView *)subview {
+    [self mis_addSubview:subview];
+    
+    if ([MISFloatingBallManager shareManager].canRuntime) {
+        if ([[MISFloatingBallManager shareManager].superView isEqual:self]) {
+            __block MISFloatingBall *findBall = nil;
+            [self.subviews enumerateObjectsUsingBlock:^(UIView * obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                if ([obj isKindOfClass:[MISFloatingBall class]]) {
+                    findBall = (MISFloatingBall *)obj;
+                    *stop = YES;
+                }
+            }];
+            
+            if (findBall) {
+                [self insertSubview:subview belowSubview:findBall];
+            }
+        }
+    }
+}
+
+@end
+
+#pragma mark - MISFloatingBall
 
 @interface MISFloatingBall()
 @property (nonatomic, assign) CGPoint centerOffset;
@@ -67,6 +136,8 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
 
 - (void)dealloc {
     MISLog(@"MISFloatingBall dealloc");
+    [MISFloatingBallManager shareManager].canRuntime = NO;
+    [MISFloatingBallManager shareManager].superView = nil;
 }
 
 - (instancetype)init {
@@ -102,8 +173,12 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
     [self setHidden:YES];
 }
 
-- (void)setupSpecifiedView:(UIView *)specifiedView; {
+- (void)setupSpecifiedView:(UIView *)specifiedView {
     [specifiedView addSubview:self];
+    
+    [MISFloatingBallManager shareManager].canRuntime = YES;
+    [MISFloatingBallManager shareManager].superView = specifiedView;
+    
     self.parentView = specifiedView;
     self.centerOffset = CGPointMake(specifiedView.bounds.size.width * 0.6, specifiedView.bounds.size.height * 0.6);
 }
