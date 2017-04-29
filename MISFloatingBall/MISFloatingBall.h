@@ -21,7 +21,7 @@ typedef NS_ENUM(NSUInteger, MISFloatingBallEdgePolicy) {
 typedef NS_ENUM(NSUInteger, MISFloatingBallContentType) {
     MISFloatingBallContentTypeImage = 0,    // 图片
     MISFloatingBallContentTypeText,         // 文字
-    MISFloatingBallContentTypeCustomView    // 自定义视图
+    MISFloatingBallContentTypeCustomView    // 自定义视图(添加到上方的自定义视图默认 userInteractionEnabled = NO)
 };
 
 typedef struct MISEdgeRetractConfig {

@@ -205,7 +205,12 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
         [self.ballImageView setHidden:YES];
         
         self.ballCustomView = (UIView *)content;
-        self.ballCustomView.center = self.center;
+        
+        CGRect frame = self.ballCustomView.frame;
+        frame.origin.x = (self.bounds.size.width - self.ballCustomView.bounds.size.width) * 0.5;
+        frame.origin.y = (self.bounds.size.height - self.ballCustomView.bounds.size.height) * 0.5;
+        self.ballCustomView.frame = frame;
+        
         self.ballCustomView.userInteractionEnabled = NO;
         [self addSubview:self.ballCustomView];
     }
