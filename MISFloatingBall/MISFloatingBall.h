@@ -78,12 +78,12 @@ UIKIT_STATIC_INLINE MISEdgeRetractConfig MISEdgeOffsetConfigMake(CGPoint edgeRet
  */
 - (void)setContent:(id)content contentType:(MISFloatingBallContentType)contentType;
 
+/**
+ 点击floatingBall的block回调
+ */
+@property (nonatomic, copy) void(^clickHander)();
+
 // 文字颜色
 @property (nonatomic, strong) UIColor *textTypeTextColor;
-@end
-
-@protocol MISFloatingBallDelegate <NSObject>
-@optional
-- (void)floatingBallClick:(MISFloatingBall *)ball;
 @end
 NS_ASSUME_NONNULL_END

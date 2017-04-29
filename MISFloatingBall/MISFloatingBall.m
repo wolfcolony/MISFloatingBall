@@ -8,6 +8,32 @@
 
 #import "MISFloatingBall.h"
 
+@interface MISFloatingBallWindow : UIWindow
+
+@end
+
+@implementation MISFloatingBallWindow
+
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
+    
+    __block MISFloatingBall *floatingBall = nil;
+    [self.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([obj isKindOfClass:[MISFloatingBall class]]) {
+            floatingBall = (MISFloatingBall *)obj;
+            *stop = YES;
+        }
+    }];
+    
+    if (CGRectContainsPoint(floatingBall.bounds,
+            [floatingBall convertPoint:point fromView:self])) {
+        return [super pointInside:point withEvent:event];
+    }
+    
+    return NO;
+}
+
+@end
+
 @interface MISFloatingBall()
 @property (nonatomic, assign) CGPoint centerOffset;
 
@@ -19,8 +45,7 @@
 @property (nonatomic, strong) UIView *parentView;
 
 // globally
-@property (nonatomic, strong) UIWindow *window;
-@property (nonatomic, strong) UIViewController *rootVC;
+@property (nonatomic, strong) MISFloatingBallWindow *window;
 
 // content
 @property (nonatomic, strong) UIImageView *ballImageView;
@@ -103,19 +128,18 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
 
 // 默认显示则显示全局
 - (void)visibleGlobally {
-    // root VC
-    self.rootVC = [[UIViewController alloc] init];
-    [self.rootVC.view addSubview:self];
-    
     // window
-    self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    self.window.windowLevel = UIWindowLevelStatusBar + 999;
+    self.window = [[MISFloatingBallWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    self.window.windowLevel = UIWindowLevelStatusBar + 100;
+    self.window.rootViewController = [UIViewController new];//self.rootVC;
     self.window.rootViewController.view.backgroundColor = [UIColor clearColor];
-    self.window.rootViewController = self.rootVC;
+    self.window.rootViewController.view.userInteractionEnabled = NO;
+    
+    [self.window addSubview:self];
     [self.window makeKeyAndVisible];
     
-    self.parentView = self.rootVC.view;
-    self.centerOffset = CGPointMake([UIScreen mainScreen].bounds.size.width * 0.6, [UIScreen mainScreen].bounds.size.height * 0.6);
+    self.parentView = self.window;
+    self.centerOffset = CGPointMake(self.parentView.bounds.size.width * 0.6, self.parentView.bounds.size.height * 0.6);
 }
 
 // 显示当前指定视图内悬浮
@@ -223,7 +247,9 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
 }
 
 - (void)tapGestureRecognizer:(UIPanGestureRecognizer *)tapGesture {
-    MISLog(@"tap!!");
+    if (self.clickHander) {
+        self.clickHander();
+    }
 }
 
 #pragma mark - Setter / Getter

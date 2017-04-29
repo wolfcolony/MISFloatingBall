@@ -38,8 +38,28 @@
     [super viewDidLoad];
     
     self.floatingBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(100, 100, 60, 60)];
-    self.floatingBall.frame = CGRectMake(30, 30, 44, 44);
     [self.floatingBall setContent:[UIImage imageNamed:@"apple"] contentType:MISFloatingBallContentTypeImage];
     [self.floatingBall visibleGlobally];
+//    [self.floatingBall visibleSpecifiedView:self.view];
+    
+    __weak typeof(self) weakSelf = self;
+    [self.floatingBall setClickHander:^{
+        NSLog(@"hander");
+        
+        UIAlertController *alerVC = [UIAlertController alertControllerWithTitle:@"点击悬浮球" message:nil preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *action  = [UIAlertAction actionWithTitle:@"确认" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            TwoViewController *twoVC = [[TwoViewController alloc] init];
+            [weakSelf presentViewController:twoVC animated:YES completion:NULL];
+        }];
+        [alerVC addAction:action];
+        [weakSelf presentViewController:alerVC animated:YES completion:NULL];
+        
+//        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"111" message:@"222" delegate:nil cancelButtonTitle:@"cancel" otherButtonTitles:@"ok", nil];
+//        [alertView show];
+    }];
+}
+
+- (void)motionBegan:(UIEventSubtype)motion withEvent:(UIEvent *)event {
+    NSLog(@"开始");
 }
 @end
