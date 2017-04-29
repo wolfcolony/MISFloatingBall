@@ -32,13 +32,25 @@
     [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     
     self.floatingBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(0, 0, 100, 60)];
+    self.floatingBall.backgroundColor = [UIColor lightGrayColor];
+    [self.floatingBall visible];
+    
+    __weak typeof(self) weakSelf = self;
+    [self.floatingBall setClickHander:^{
+        [weakSelf.floatingBall disVisible];
+    }];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
     [self.floatingBall visible];
 }
 
 - (NSMutableArray *)imageDatas {
     if (!_imageDatas) {
         _imageDatas = [NSMutableArray array];
-        for (NSInteger index = 0; index < 60; index++) {
+        for (NSInteger index = 0; index < 1000; index++) {
             [_imageDatas addObject:@"apple"];
         }
     }
@@ -77,6 +89,11 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([UITableViewCell class]) forIndexPath:indexPath];
     cell.imageView.image = [UIImage imageNamed:self.imageDatas[indexPath.item]];
+    cell.textLabel.text = @"我是一张图片，滚动看FPS";
     return cell;
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    [NSThread sleepForTimeInterval:0.1f];
 }
 @end
