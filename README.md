@@ -38,20 +38,24 @@ MISFloatingBall
 		
 * 设置悬浮球显示的内容（内部自动居中）
 
-		// 设置图片
+		// 设置图片 
 		[floatingBall setContent:[UIImage imageNamed:@"apple"] contentType:MISFloatingBallContentTypeImage];
 		
 		// 设置文字
 		[floatingBall setContent:@"我是文字" contentType:MISFloatingBallContentTypeText];
 		
+* 如果想要添加一个自定义的视图到悬浮球中
+
 		// 设置一个自定义的视图
 		MISCustomButton *button = [[MISCustomButton alloc] initWithFrame:CGRectMake(0, 0, 80, 80)];
 		button.titleLabel.textAlignment = NSTextAlignmentCenter;
 		button.imageSize = CGSizeMake(44, 44);
-		[button setImage:[UIImage imageNamed:@"apple"] forState:UIControlStateNormal];
-		[button setTitle:@"一个图片" forState:UIControlStateNormal];
 		button.titleLabel.font = [UIFont systemFontOfSize:16.0f];
 		button.backgroundColor = [UIColor redColor];
+
+		[button setImage:[UIImage imageNamed:@"apple"] forState:UIControlStateNormal];
+		[button setTitle:@"一个图片" forState:UIControlStateNormal];
+
 		// 设置自定义视图
 		[floatingBall setContent:button contentType:MISFloatingBallContentTypeCustomView];
 		
@@ -80,8 +84,9 @@ MISFloatingBall
 	    
 ### 系统要求
 最低支持 `iOS 7.0` 和 `Xcode 7.0`。
-	    
-	    
+
+### issue
+如果存在bug或有重大问题欢迎提给我，希望可以一起共同学习进步  
 	    
 	
 			
