@@ -314,6 +314,9 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
 - (void)panGestureRecognizer:(UIPanGestureRecognizer *)panGesture {
     if (UIGestureRecognizerStateBegan == panGesture.state) {
         [self setAlpha:1.0f];
+        
+        // cancel
+        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(autoEdgeOffset) object:nil];
     }
     else if (UIGestureRecognizerStateChanged == panGesture.state) {
         CGPoint translation = [panGesture translationInView:self];
