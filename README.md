@@ -81,12 +81,16 @@ MISFloatingBall
    		     [blockBall disVisible];
 	    }];
 	    
+	    // 或者设置代理，在实现代理方法，获取点击事件
+	    - (void)didClickFloatingBall:(MISFloatingBall *)floatingBall {
+	    	// 悬浮球点击
+	    }
 	    
 ### 系统要求
-最低支持 `iOS 7.0` 和 `Xcode 7.0`。
+最低支持 `iOS 8.0` 和 `Xcode 8.0`。
 
-### issue
-如果存在bug或有重大问题欢迎提给我，希望可以一起共同学习进步  
+### Issue
+如果存在 Bug 或有重大问题欢迎 Issue me，希望可以一起共同学习进步  
 	    
 	
 			
