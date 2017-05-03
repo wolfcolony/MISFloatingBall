@@ -34,6 +34,7 @@ UIKIT_STATIC_INLINE MISEdgeRetractConfig MISEdgeOffsetConfigMake(CGPoint edgeRet
     return config;
 }
 
+@protocol MISFloatingBallDelegate;
 @interface MISFloatingBall : UIView
 /**
  靠边策略
@@ -56,6 +57,11 @@ UIKIT_STATIC_INLINE MISEdgeRetractConfig MISEdgeOffsetConfigMake(CGPoint edgeRet
  @return 悬浮球
  */
 - (instancetype)initWithFrame:(CGRect)frame inSpecifiedView:(UIView *)specifiedView;
+
+/**
+ 悬浮球代理
+ */
+@property (nonatomic, weak) id<MISFloatingBallDelegate> delegate;
 
 /**
  显示悬浮球
@@ -96,4 +102,14 @@ UIKIT_STATIC_INLINE MISEdgeRetractConfig MISEdgeOffsetConfigMake(CGPoint edgeRet
 // 文字颜色
 @property (nonatomic, strong) UIColor *textTypeTextColor;
 @end
+
+
+@protocol MISFloatingBallDelegate <NSObject>
+@optional
+
+- (void)didClickFloatingBall:(MISFloatingBall *)floatingBall;
+
+@end
+
+
 NS_ASSUME_NONNULL_END
