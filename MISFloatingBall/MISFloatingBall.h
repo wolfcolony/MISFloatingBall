@@ -111,5 +111,10 @@ UIKIT_STATIC_INLINE MISEdgeRetractConfig MISEdgeOffsetConfigMake(CGPoint edgeRet
 
 @end
 
+@interface MISFloatingBall (Unavailable)
 
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)new NS_UNAVAILABLE;
+
+@end
 NS_ASSUME_NONNULL_END
