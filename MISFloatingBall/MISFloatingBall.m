@@ -179,7 +179,7 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
 
 - (void)setupGlobally {
     self.window = [[MISFloatingBallWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    self.window.windowLevel = UIWindowLevelStatusBar - 1;
+    self.window.windowLevel = CGFLOAT_MAX;;//UIWindowLevelStatusBar - 1;
     
     // temp use rotate...(unfulfilment)
     self.window.rootViewController = [UIViewController new];

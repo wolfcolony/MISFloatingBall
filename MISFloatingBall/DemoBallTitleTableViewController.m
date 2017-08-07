@@ -32,13 +32,23 @@
     [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     
     self.floatingBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(0, 0, 100, 60)];
+//    self.floatingBall = [MISFloatingBall alloc] ini
     self.floatingBall.backgroundColor = [UIColor lightGrayColor];
-    [self.floatingBall visible];
     
     __weak typeof(self) weakSelf = self;
     [self.floatingBall setClickHander:^{
         [weakSelf.floatingBall disVisible];
     }];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(test:) name:UIWindowDidBecomeVisibleNotification object:nil];
+}
+
+- (void)test:(NSNotification*)noti {
+    NSLog(@"111");
+    UIWindow *window = noti.object;
+    NSArray *windows = [UIApplication sharedApplication].windows;
+    NSLog(@"current window count %ld", windows.count);
+    NSLog(@"Window has become keyWindow: %@, window level: %f, index of windows: %ld", window, window.windowLevel, [windows indexOfObject:window]);
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -88,8 +98,25 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([UITableViewCell class]) forIndexPath:indexPath];
-    cell.imageView.image = [UIImage imageNamed:self.imageDatas[indexPath.item]];
-    cell.textLabel.text = @"我是一张图片，滚动看FPS";
+    if (indexPath.item != 0) {
+        cell.imageView.image = [UIImage imageNamed:self.imageDatas[indexPath.item]];
+        cell.textLabel.text = @"我是一张图片，滚动看FPS";
+    }
+    else {
+        UITextView *textview = [[UITextView alloc] initWithFrame:cell.bounds];
+        [textview becomeFirstResponder];
+        [cell addSubview:textview];
+//        [self.floatingBall visible];
+        
+        UIWindow *window = [[UIWindow alloc] initWithFrame:self.view.bounds];
+        
+        window.backgroundColor = [UIColor yellowColor];
+        
+        UIViewController *vc = [[UIViewController alloc] init];
+        window.rootViewController = vc;
+        [window makeKeyAndVisible];
+    }
+    
     return cell;
 }
 
