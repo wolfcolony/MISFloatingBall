@@ -12,12 +12,12 @@
 		C4863C811EB4626500B0B4E2 /* MISCustomButton.m in Sources */ = {isa = PBXBuildFile; fileRef = C4863C801EB4626500B0B4E2 /* MISCustomButton.m */; };
 		C4863C841EB4792600B0B4E2 /* DemoBallSpecifiedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C4863C831EB4792600B0B4E2 /* DemoBallSpecifiedViewController.m */; };
 		C4863C871EB479B600B0B4E2 /* DemoBallSpecifiedTwoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C4863C861EB479B600B0B4E2 /* DemoBallSpecifiedTwoViewController.m */; };
+		C48F9ADE1F3957DC00D8FB42 /* MISFloatingBall.m in Sources */ = {isa = PBXBuildFile; fileRef = C48F9ADD1F3957DC00D8FB42 /* MISFloatingBall.m */; };
 		C4E87DD01EAB24520098F645 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C4E87DCF1EAB24520098F645 /* main.m */; };
 		C4E87DD31EAB24520098F645 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C4E87DD21EAB24520098F645 /* AppDelegate.m */; };
 		C4E87DD91EAB24520098F645 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C4E87DD71EAB24520098F645 /* Main.storyboard */; };
 		C4E87DDB1EAB24520098F645 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C4E87DDA1EAB24520098F645 /* Assets.xcassets */; };
 		C4E87DDE1EAB24520098F645 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C4E87DDC1EAB24520098F645 /* LaunchScreen.storyboard */; };
-		C4E87DE71EAB2BA50098F645 /* MISFloatingBall.m in Sources */ = {isa = PBXBuildFile; fileRef = C4E87DE61EAB2BA50098F645 /* MISFloatingBall.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +31,8 @@
 		C4863C831EB4792600B0B4E2 /* DemoBallSpecifiedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoBallSpecifiedViewController.m; sourceTree = "<group>"; };
 		C4863C851EB479B600B0B4E2 /* DemoBallSpecifiedTwoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DemoBallSpecifiedTwoViewController.h; sourceTree = "<group>"; };
 		C4863C861EB479B600B0B4E2 /* DemoBallSpecifiedTwoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DemoBallSpecifiedTwoViewController.m; sourceTree = "<group>"; };
+		C48F9ADC1F3957DC00D8FB42 /* MISFloatingBall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MISFloatingBall.h; path = MISFloatingBall/MISFloatingBall.h; sourceTree = "<group>"; };
+		C48F9ADD1F3957DC00D8FB42 /* MISFloatingBall.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MISFloatingBall.m; path = MISFloatingBall/MISFloatingBall.m; sourceTree = "<group>"; };
 		C4E87DCB1EAB24520098F645 /* MISFloatingBall.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MISFloatingBall.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4E87DCF1EAB24520098F645 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		C4E87DD11EAB24520098F645 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -39,8 +41,6 @@
 		C4E87DDA1EAB24520098F645 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C4E87DDD1EAB24520098F645 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C4E87DDF1EAB24520098F645 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C4E87DE51EAB2BA50098F645 /* MISFloatingBall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MISFloatingBall.h; sourceTree = "<group>"; };
-		C4E87DE61EAB2BA50098F645 /* MISFloatingBall.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MISFloatingBall.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,8 +106,8 @@
 		C4E87DF21EAB381C0098F645 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				C4E87DE51EAB2BA50098F645 /* MISFloatingBall.h */,
-				C4E87DE61EAB2BA50098F645 /* MISFloatingBall.m */,
+				C48F9ADC1F3957DC00D8FB42 /* MISFloatingBall.h */,
+				C48F9ADD1F3957DC00D8FB42 /* MISFloatingBall.m */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -185,10 +185,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				C4863C721EB43D8300B0B4E2 /* DemoTableViewController.m in Sources */,
-				C4E87DE71EAB2BA50098F645 /* MISFloatingBall.m in Sources */,
 				C4863C841EB4792600B0B4E2 /* DemoBallSpecifiedViewController.m in Sources */,
 				C4863C811EB4626500B0B4E2 /* MISCustomButton.m in Sources */,
 				C4863C871EB479B600B0B4E2 /* DemoBallSpecifiedTwoViewController.m in Sources */,
+				C48F9ADE1F3957DC00D8FB42 /* MISFloatingBall.m in Sources */,
 				C4E87DD31EAB24520098F645 /* AppDelegate.m in Sources */,
 				C4863C751EB443B100B0B4E2 /* DemoBallTitleTableViewController.m in Sources */,
 				C4E87DD01EAB24520098F645 /* main.m in Sources */,
