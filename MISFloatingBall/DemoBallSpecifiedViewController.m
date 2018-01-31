@@ -12,10 +12,15 @@
 #import "DemoBallSpecifiedTwoViewController.h"
 
 @interface DemoBallSpecifiedViewController ()
+@property (nonatomic, strong) MISFloatingBall *floatingBall;
 
 @end
 
 @implementation DemoBallSpecifiedViewController
+
+- (void)dealloc {
+    NSLog(@"DemoBallSpecifiedViewController %@", NSStringFromSelector(_cmd));
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -29,33 +34,34 @@
     
     MISFloatingBall *floatingBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(100, 100, 100, 100) inSpecifiedView:self.view];
     
-    floatingBall.backgroundColor = [UIColor orangeColor];
-    
-    floatingBall.autoCloseEdge = YES;
-    [floatingBall setContent:@"点我弹控制器" contentType:MISFloatingBallContentTypeText];
+    __weak typeof(self) weakSelf = self;
+    floatingBall.clickHandler = ^(MISFloatingBall * _Nonnull floatingBall) {
+        DemoBallSpecifiedTwoViewController *vc = [[DemoBallSpecifiedTwoViewController alloc] init];
+        [weakSelf presentViewController:vc animated:YES completion:NULL];
+    };
+
     [floatingBall visible];
     
-    __weak typeof(self) weakSelf = self;
-    [floatingBall setClickHander:^{
-        
-        if (weakSelf) {
-            
-            DemoBallSpecifiedTwoViewController *vc = [[DemoBallSpecifiedTwoViewController alloc] init];
-        
-            [weakSelf presentViewController:vc animated:YES completion:NULL];
-        }
-    }];
+    floatingBall.backgroundColor = [UIColor orangeColor];
+    floatingBall.autoCloseEdge = YES;
+    [floatingBall setContent:@"点我弹控制器" contentType:MISFloatingBallContentTypeText];
+    
+    self.floatingBall = floatingBall;
     
     UIView *view = [[UIView alloc] initWithFrame:CGRectMake(100, 100, 100, 100)];
     view.backgroundColor = [UIColor redColor];
     [self.view addSubview:view];
-    
     
     UIView *view2 = [[UIView alloc] initWithFrame:CGRectMake(150, 100, 100, 100)];
     view2.backgroundColor = [UIColor blueColor];
     [self.view addSubview:view2];
 }
 
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    
+    [self.floatingBall disVisible];
+}
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     [super touchesBegan:touches withEvent:event];

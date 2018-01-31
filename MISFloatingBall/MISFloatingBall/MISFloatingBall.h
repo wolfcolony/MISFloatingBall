@@ -34,29 +34,26 @@ UIKIT_STATIC_INLINE MISEdgeRetractConfig MISEdgeOffsetConfigMake(CGPoint edgeRet
     return config;
 }
 
+@class MISFloatingBall;
 @protocol MISFloatingBallDelegate;
+
+typedef void(^MISFloatingBallClickHandler)(MISFloatingBall *floatingBall);
+
 @interface MISFloatingBall : UIView
 /**
  靠边策略
  */
-@property (nonatomic, assign) MISFloatingBallEdgePolicy edgePolicy; 
+@property (nonatomic, assign) MISFloatingBallEdgePolicy edgePolicy;
 
 /**
- 默认创建一个悬浮球（没有存在指定需要显示的view，默认为全局显示的悬浮球，跨vc生效）
-
- @param frame 尺寸
- @return 悬浮球
- */
-- (instancetype)initWithFrame:(CGRect)frame;
-
-/**
- 初始化悬浮球（只会在当前指定的view内生效）
+ 初始化只会在当前指定的 view 范围内生效的悬浮球
+ 当 view 为 nil 的时候，和直接使用 initWithFrame 初始化效果一直，默认为全局生效的悬浮球
 
  @param frame 尺寸
  @param specifiedView 将要显示所在的view
  @return 悬浮球
  */
-- (instancetype)initWithFrame:(CGRect)frame inSpecifiedView:(UIView *)specifiedView;
+- (instancetype)initWithFrame:(CGRect)frame inSpecifiedView:(nullable UIView *)specifiedView;
 
 /**
  悬浮球代理
@@ -95,26 +92,21 @@ UIKIT_STATIC_INLINE MISEdgeRetractConfig MISEdgeOffsetConfigMake(CGPoint edgeRet
 - (void)setContent:(id)content contentType:(MISFloatingBallContentType)contentType;
 
 /**
- 点击floatingBall的block回调
+ 点击 floatingBall 的 block 回调
  */
-@property (nonatomic, copy) void(^clickHander)();
+@property (nonatomic,   copy) MISFloatingBallClickHandler clickHandler;
 
 // 文字颜色
 @property (nonatomic, strong) UIColor *textTypeTextColor;
 @end
 
-
 @protocol MISFloatingBallDelegate <NSObject>
 @optional
-
 - (void)didClickFloatingBall:(MISFloatingBall *)floatingBall;
-
 @end
 
 @interface MISFloatingBall (Unavailable)
-
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;
-
 @end
 NS_ASSUME_NONNULL_END

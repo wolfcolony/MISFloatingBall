@@ -32,6 +32,8 @@
 @interface DemoTableViewController ()
 @property (nonatomic, strong) NSArray *headerTitles;
 @property (nonatomic, strong) NSArray<NSArray<Example *> *> *demoDatas;
+@property (nonatomic, strong) MISFloatingBall *globallyBall;
+
 @end
 
 @implementation DemoTableViewController
@@ -66,15 +68,20 @@
 #pragma mark - Private Methods
 
 - (void)imageBall {
-    MISFloatingBall *globallyBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(100, 100, 60, 60)];
-    globallyBall.backgroundColor = [UIColor redColor];
-    [globallyBall setContent:[UIImage imageNamed:@"apple"] contentType:MISFloatingBallContentTypeImage];
-    [globallyBall visible];
+    self.globallyBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(100, 100, 60, 60)];
+    [self.globallyBall visible];
     
-    __block typeof(globallyBall) blockBall = globallyBall;
-    [globallyBall setClickHander:^{
-        [blockBall disVisible];
-    }];
+    __weak typeof(self) weakSelf = self;
+    self.globallyBall.clickHandler = ^(MISFloatingBall * _Nonnull floatingBall) {
+        [floatingBall disVisible];
+        
+        // 实际开发中需要注意如果是 base vc 的话，要注意 self 和 ball 强引用，解决办法使用 weak ball，或者手动设置
+        // self.globallyBall = nil
+        weakSelf.globallyBall = nil;
+    };
+    
+    self.globallyBall.backgroundColor = [UIColor redColor];
+    [self.globallyBall setContent:[UIImage imageNamed:@"apple"] contentType:MISFloatingBallContentTypeImage];
 }
 
 - (void)titleBall {
@@ -97,10 +104,9 @@
     [globallyBall setContent:button contentType:MISFloatingBallContentTypeCustomView];
     [globallyBall visible];
     
-    __block typeof(globallyBall) blockBall = globallyBall;
-    [globallyBall setClickHander:^{
-        [blockBall disVisible];
-    }];
+    globallyBall.clickHandler = ^(MISFloatingBall * _Nonnull floatingBall) {
+        [floatingBall disVisible];
+    };
 }
 
 - (void)autoCloseEdge {
@@ -110,10 +116,9 @@
     [floating setContent:[UIImage imageNamed:@"apple"] contentType:MISFloatingBallContentTypeImage];
     [floating visible];
     
-    __block typeof(floating) blockBall = floating;
-    [floating setClickHander:^{
-        [blockBall disVisible];
-    }];
+    floating.clickHandler = ^(MISFloatingBall * _Nonnull floatingBall) {
+        [floatingBall disVisible];
+    };
 }
 
 - (void)autoEdgeRetract {
@@ -127,10 +132,9 @@
         return MISEdgeOffsetConfigMake(CGPointMake(20, 20), 0.7f);
     }];
     
-    __block typeof(floating) blockBall = floating;
-    [floating setClickHander:^{
-        [blockBall disVisible];
-    }];
+    floating.clickHandler = ^(MISFloatingBall * _Nonnull floatingBall) {
+        [floatingBall disVisible];
+    };
 }
 
 - (void)leftRight {
@@ -143,10 +147,9 @@
     [globallyBall setContent:[UIImage imageNamed:@"apple"] contentType:MISFloatingBallContentTypeImage];
     [globallyBall visible];
     
-    __block typeof(globallyBall) blockBall = globallyBall;
-    [globallyBall setClickHander:^{
-        [blockBall disVisible];
-    }];
+    globallyBall.clickHandler = ^(MISFloatingBall * _Nonnull floatingBall) {
+        [floatingBall disVisible];
+    };
 }
 
 - (void)specifiedView {

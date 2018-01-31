@@ -12,13 +12,11 @@
 #pragma mark - MISFloatingBallWindow
 
 @interface MISFloatingBallWindow : UIWindow
-
 @end
 
 @implementation MISFloatingBallWindow
 
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
-    
     __block MISFloatingBall *floatingBall = nil;
     [self.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if ([obj isKindOfClass:[MISFloatingBall class]]) {
@@ -99,16 +97,12 @@
 
 @interface MISFloatingBall()
 @property (nonatomic, assign) CGPoint centerOffset;
-
 @property (nonatomic,   copy) MISEdgeRetractConfig(^edgeRetractConfigHander)();
 @property (nonatomic, assign) NSTimeInterval autoEdgeOffsetDuration;
 
 @property (nonatomic, assign, getter=isAutoEdgeRetract) BOOL autoEdgeRetract;
 
 @property (nonatomic, strong) UIView *parentView;
-
-// globally
-@property (nonatomic, strong) MISFloatingBallWindow *window;
 
 // content
 @property (nonatomic, strong) UIImageView *ballImageView;
@@ -134,65 +128,53 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
     [MISFloatingBallManager shareManager].superView = nil;
 }
 
-- (instancetype)init {
-    return [self initWithFrame:CGRectMake(0, 0, 44, 44)];
+- (instancetype)initWithFrame:(CGRect)frame {
+    return [self initWithFrame:frame inSpecifiedView:nil];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame inSpecifiedView:(UIView *)specifiedView {
     self = [super initWithFrame:frame];
-    
     if (self) {
-        [self initialize];
-        [self addGestureRecognizer];
-        [self setupSpecifiedView:specifiedView];
+        self.backgroundColor = [UIColor clearColor];
+        
+        _autoCloseEdge = NO;
+        _autoEdgeRetract = NO;
+        _edgePolicy = MISFloatingBallEdgePolicyAllEdge;
+        
+        UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognizer:)];
+        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureRecognizer:)];
+        
+        [self addGestureRecognizer:tapGesture];
+        [self addGestureRecognizer:panGesture];
+        [self configSpecifiedView:specifiedView];
     }
     return self;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:frame];
-    if (self) {
-        [self initialize];
-        [self addGestureRecognizer];
-        [self setupGlobally];
+- (void)configSpecifiedView:(UIView *)specifiedView {
+    if (specifiedView) {
+        _parentView = specifiedView;
     }
-    return self;
-}
-
-- (void)initialize {
-    self.backgroundColor = [UIColor clearColor];
-    self.autoCloseEdge = NO;   // 自动靠边
-    self.autoEdgeRetract = NO;  // 自动缩进
-    self.edgePolicy = MISFloatingBallEdgePolicyAllEdge;
-    [self setHidden:YES];
-}
-
-- (void)setupSpecifiedView:(UIView *)specifiedView {
-    [specifiedView addSubview:self];
+    else {
+        UIWindow *window = [[MISFloatingBallWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+        window.windowLevel = CGFLOAT_MAX; //UIWindowLevelStatusBar - 1;
+        window.rootViewController = [UIViewController new];
+        window.rootViewController.view.backgroundColor = [UIColor clearColor];
+        window.rootViewController.view.userInteractionEnabled = NO;
+        [window makeKeyAndVisible];
+        
+        _parentView = window;
+    }
     
+    _parentView.hidden = YES;
+    _centerOffset = CGPointMake(_parentView.bounds.size.width * 0.6, _parentView.bounds.size.height * 0.6);
+    
+    // setup ball manager
     [MISFloatingBallManager shareManager].canRuntime = YES;
     [MISFloatingBallManager shareManager].superView = specifiedView;
-    
-    self.parentView = specifiedView;
-    self.centerOffset = CGPointMake(specifiedView.bounds.size.width * 0.6, specifiedView.bounds.size.height * 0.6);
 }
 
-- (void)setupGlobally {
-    self.window = [[MISFloatingBallWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    self.window.windowLevel = CGFLOAT_MAX;;//UIWindowLevelStatusBar - 1;
-    
-    // temp use rotate...(unfulfilment)
-    self.window.rootViewController = [UIViewController new];
-    self.window.rootViewController.view.backgroundColor = [UIColor clearColor];
-    self.window.rootViewController.view.userInteractionEnabled = NO;
-    self.parentView = self.window;
-    [self.window addSubview:self];
-    [self.window makeKeyAndVisible];
-    
-    self.centerOffset = CGPointMake(self.parentView.bounds.size.width * 0.6, self.parentView.bounds.size.height * 0.6);
-}
-
-#pragma mark - Private
+#pragma mark - Private Methods
 
 // 靠边
 - (void)autoCloseEdge {
@@ -247,11 +229,13 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
 #pragma mark - Public Methods
 
 - (void)visible {
-    [self setHidden:NO];
+    self.parentView.hidden = NO;
+    [self.parentView addSubview:self];
 }
 
 - (void)disVisible {
-    [self setHidden:YES];
+    self.parentView.hidden = YES;
+    [self removeFromSuperview];
 }
 
 - (void)autoEdgeRetractDuration:(NSTimeInterval)duration edgeRetractConfigHander:(MISEdgeRetractConfig (^)())edgeRetractConfigHander {
@@ -302,14 +286,6 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
 
 #pragma mark - GestureRecognizer
 
-- (void)addGestureRecognizer {
-    UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognizer:)];
-    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureRecognizer:)];
-    
-    [self addGestureRecognizer:tapGesture];
-    [self addGestureRecognizer:panGesture];
-}
-
 // 手势处理
 - (void)panGestureRecognizer:(UIPanGestureRecognizer *)panGesture {
     if (UIGestureRecognizerStateBegan == panGesture.state) {
@@ -352,11 +328,12 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
 }
 
 - (void)tapGestureRecognizer:(UIPanGestureRecognizer *)tapGesture {
-    if (self.clickHander) {
-        self.clickHander();
+    __weak __typeof(self) weakSelf = self;
+    if (self.clickHandler) {
+        self.clickHandler(weakSelf);
     }
     
-    if (_delegate && [_delegate respondsToSelector:@selector(didClickFloatingBall:)]) {
+    if ([_delegate respondsToSelector:@selector(didClickFloatingBall:)]) {
         [_delegate didClickFloatingBall:self];
     }
 }
