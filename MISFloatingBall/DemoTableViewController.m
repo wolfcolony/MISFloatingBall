@@ -32,8 +32,6 @@
 @interface DemoTableViewController ()
 @property (nonatomic, strong) NSArray *headerTitles;
 @property (nonatomic, strong) NSArray<NSArray<Example *> *> *demoDatas;
-
-@property (nonatomic, strong) DemoBallTitleTableViewController *titleTableVC;
 @end
 
 @implementation DemoTableViewController
@@ -80,7 +78,8 @@
 }
 
 - (void)titleBall {
-    [self.navigationController pushViewController:self.titleTableVC animated:YES];
+    DemoBallTitleTableViewController *titleTableVC = [DemoBallTitleTableViewController new];
+    [self.navigationController pushViewController:titleTableVC animated:YES];
 }
 
 - (void)customBall {
@@ -185,13 +184,5 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
     });
-}
-
-
-- (DemoBallTitleTableViewController *)titleTableVC {
-    if (!_titleTableVC) {
-        _titleTableVC = [[DemoBallTitleTableViewController alloc] init];
-    }
-    return _titleTableVC;
 }
 @end

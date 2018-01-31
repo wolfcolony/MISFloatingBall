@@ -18,27 +18,29 @@
 @property (nonatomic, assign) NSTimeInterval lastTime;
 
 @property (nonatomic, strong) MISFloatingBall *floatingBall;
+@property (nonatomic, strong) CADisplayLink *displayLink;
 
 @end
 
 @implementation DemoBallTitleTableViewController
+
+- (void)dealloc {
+    NSLog(@"DemoBallTitleTableViewController %@", NSStringFromSelector(_cmd));
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:NSStringFromClass([UITableViewCell class])];
     
-    CADisplayLink *displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(tick:)];
-    [displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+    self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(tick:)];
+    [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     
     self.floatingBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(0, 0, 100, 60)];
-//    self.floatingBall = [MISFloatingBall alloc] ini
     self.floatingBall.backgroundColor = [UIColor lightGrayColor];
-    
-    __weak typeof(self) weakSelf = self;
-    [self.floatingBall setClickHander:^{
-        [weakSelf.floatingBall disVisible];
-    }];
+    self.floatingBall.clickHandler = ^(MISFloatingBall * _Nonnull floatingBall) {
+        [floatingBall disVisible];
+    };
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(test:) name:UIWindowDidBecomeVisibleNotification object:nil];
 }
@@ -53,8 +55,15 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    
     [self.floatingBall visible];
+}
+
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    [self.displayLink invalidate];
+    [self.floatingBall disVisible];
 }
 
 - (NSMutableArray *)imageDatas {
