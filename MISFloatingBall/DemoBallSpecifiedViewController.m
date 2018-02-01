@@ -32,7 +32,8 @@
     view0.backgroundColor = [UIColor lightGrayColor];
     [self.view addSubview:view0];
     
-    MISFloatingBall *floatingBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(100, 100, 100, 100) inSpecifiedView:self.view];
+    // 生成一个限制滑动为
+    MISFloatingBall *floatingBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(100, 100, 100, 100) inSpecifiedView:self.view effectiveEdgeInsets:UIEdgeInsetsMake(64, 0, 0, 0)];
     
     __weak typeof(self) weakSelf = self;
     floatingBall.clickHandler = ^(MISFloatingBall * _Nonnull floatingBall) {

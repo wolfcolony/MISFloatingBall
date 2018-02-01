@@ -129,7 +129,7 @@
     
     // 3s后缩进
     [floating autoEdgeRetractDuration:3.0f edgeRetractConfigHander:^MISEdgeRetractConfig{
-        return MISEdgeOffsetConfigMake(CGPointMake(20, 20), 0.7f);
+        return MISEdgeOffsetConfigMake(CGPointMake(50, 50), 0.7f);
     }];
     
     floating.clickHandler = ^(MISFloatingBall * _Nonnull floatingBall) {

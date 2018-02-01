@@ -75,7 +75,7 @@ MISFloatingBall
 		
 * 悬浮球的点击
 
-		__block typeof(floating) blockBall = floatingBall;
+		__weak typeof(floating) blockBall = floatingBall;
 	    [floating setClickHander:^{
 			  // 主要可以实现悬浮球点击之后的事件处理
    		     [blockBall disVisible];

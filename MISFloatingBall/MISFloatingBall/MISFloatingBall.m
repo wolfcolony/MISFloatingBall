@@ -108,9 +108,11 @@
 @property (nonatomic, strong) UIImageView *ballImageView;
 @property (nonatomic, strong) UILabel *ballLabel;
 @property (nonatomic, strong) UIView *ballCustomView;
+
+@property (nonatomic, assign) UIEdgeInsets effectiveEdgeInsets;
 @end
 
-static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePolicyAllEdge下，悬浮球到达一个界限开始自动靠近上下边缘
+static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePolicyAllEdge 下，悬浮球到达一个界限开始自动靠近上下边缘
 
 #ifndef __OPTIMIZE__
 #define MISLog(...) NSLog(__VA_ARGS__)
@@ -129,10 +131,14 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
-    return [self initWithFrame:frame inSpecifiedView:nil];
+    return [self initWithFrame:frame inSpecifiedView:nil effectiveEdgeInsets:UIEdgeInsetsZero];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame inSpecifiedView:(UIView *)specifiedView {
+    return [self initWithFrame:frame inSpecifiedView:specifiedView effectiveEdgeInsets:UIEdgeInsetsZero];
+}
+
+- (instancetype)initWithFrame:(CGRect)frame inSpecifiedView:(UIView *)specifiedView effectiveEdgeInsets:(UIEdgeInsets)effectiveEdgeInsets {
     self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = [UIColor clearColor];
@@ -140,6 +146,7 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
         _autoCloseEdge = NO;
         _autoEdgeRetract = NO;
         _edgePolicy = MISFloatingBallEdgePolicyAllEdge;
+        _effectiveEdgeInsets = effectiveEdgeInsets;
         
         UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureRecognizer:)];
         UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureRecognizer:)];
@@ -207,20 +214,20 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
     
     if (MISFloatingBallEdgePolicyLeftRight == self.edgePolicy) {
         // 左右
-        center.x = (center.x < self.parentView.bounds.size.width  * 0.5) ? (ballHalfW - offset.x) : (parentViewW + offset.x - ballHalfW);
+        center.x = (center.x < self.parentView.bounds.size.width * 0.5) ? (ballHalfW - offset.x + self.effectiveEdgeInsets.left) : (parentViewW + offset.x - ballHalfW + self.effectiveEdgeInsets.right);
     }
     else if (MISFloatingBallEdgePolicyUpDown == self.edgePolicy) {
-        center.y = (center.y < self.parentView.bounds.size.height * 0.5) ? (ballHalfH - offset.y) : (parentViewH + offset.y - ballHalfH);
+        center.y = (center.y < self.parentView.bounds.size.height * 0.5) ? (ballHalfH - offset.y + self.effectiveEdgeInsets.top) : (parentViewH + offset.y - ballHalfH + self.effectiveEdgeInsets.bottom);
     }
     else if (MISFloatingBallEdgePolicyAllEdge == self.edgePolicy) {
         if (center.y < minUpDownLimits) {
-            center.y = ballHalfH - offset.y;
+            center.y = ballHalfH - offset.y + self.effectiveEdgeInsets.top;
         }
         else if (center.y > parentViewH - minUpDownLimits) {
-            center.y = parentViewH + offset.y - ballHalfH;
+            center.y = parentViewH + offset.y - ballHalfH + self.effectiveEdgeInsets.bottom;
         }
         else {
-            center.x = (center.x < self.parentView.bounds.size.width  * 0.5) ? (ballHalfW - offset.x) : (parentViewW + offset.x - ballHalfW);
+            center.x = (center.x < self.parentView.bounds.size.width  * 0.5) ? (ballHalfW - offset.x + self.effectiveEdgeInsets.left) : (parentViewW + offset.x - ballHalfW + self.effectiveEdgeInsets.right);
         }
     }
     return center;
@@ -310,10 +317,10 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
         center.y += translation.y;
         self.center = center;
         
-        CGFloat   leftMinX = 0.0f;
-        CGFloat    topMinY = 0.0f;
-        CGFloat  rightMaxX = self.parentView.bounds.size.width - self.bounds.size.width;
-        CGFloat bottomMaxY = self.parentView.bounds.size.height - self.bounds.size.height;
+        CGFloat   leftMinX = 0.0f + self.effectiveEdgeInsets.left;
+        CGFloat    topMinY = 0.0f + self.effectiveEdgeInsets.top;
+        CGFloat  rightMaxX = self.parentView.bounds.size.width - self.bounds.size.width + self.effectiveEdgeInsets.right;
+        CGFloat bottomMaxY = self.parentView.bounds.size.height - self.bounds.size.height + self.effectiveEdgeInsets.bottom;
         
         CGRect frame = self.frame;
         frame.origin.x = frame.origin.x > rightMaxX ? rightMaxX : frame.origin.x;
