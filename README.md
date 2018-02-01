@@ -21,12 +21,13 @@ MISFloatingBall
 * 初始化
 		
 		MISFloatingBall *floatingBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(100, 100, 100, 100)];// 全局作用
-		MISFloatingBall *floatingBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(100, 100, 100, 100) inSpecifiedView:self.view];// 指定View生效
+		MISFloatingBall *floatingBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(100, 100, 100, 100) inSpecifiedView:nil UIEdgeInsetsMake(64, 0, 0, 0)];	// 生成全局范围的悬浮球，并且有限制范围
+		MISFloatingBall *floatingBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(100, 100, 100, 100) inSpecifiedView:self.view effectiveEdgeInsets:UIEdgeInsetsMake(64, 0, 0, 0)];	// 生成一个指定 view 生效的悬浮球，并且有限制范围
 			
 * 显示和隐藏
 	
-		[floatingBall visible];			// 显示
-		[floatingBall disVisible];		// 隐藏
+		[floatingBall show];	 	// 显示
+		[floatingBall hide];		// 隐藏
 			
 * 生成后是否自动靠边
 
@@ -75,12 +76,10 @@ MISFloatingBall
 		
 * 悬浮球的点击
 
-		__weak typeof(floating) blockBall = floatingBall;
-	    [floating setClickHander:^{
-			  // 主要可以实现悬浮球点击之后的事件处理
-   		     [blockBall disVisible];
-	    }];
-	    
+    	globallyBall.clickHandler = ^(MISFloatingBall * _Nonnull floatingBall) {
+			[floatingBall disVisible];
+	    };
+    	    
 	    // 或者设置代理，在实现代理方法，获取点击事件
 	    - (void)didClickFloatingBall:(MISFloatingBall *)floatingBall {
 	    	// 悬浮球点击
