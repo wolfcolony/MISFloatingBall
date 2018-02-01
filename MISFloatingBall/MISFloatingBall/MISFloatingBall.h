@@ -61,14 +61,17 @@ typedef void(^MISFloatingBallClickHandler)(MISFloatingBall *floatingBall);
 @property (nonatomic, weak) id<MISFloatingBallDelegate> delegate;
 
 /**
- 显示悬浮球
+ 显示
  */
-- (void)visible;
+- (void)show;
 
 /**
- 隐藏悬浮球
+ 隐藏
  */
-- (void)disVisible;
+- (void)hide;
+
+- (void)visible __deprecated_msg("Method deprecated. Use `show`");
+- (void)disVisible __deprecated_msg("Method deprecated. Use `hide`");
 
 /**
  是否自动靠边

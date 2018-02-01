@@ -228,14 +228,22 @@ static const NSInteger minUpDownLimits = 60 * 1.5f;   // MISFloatingBallEdgePoli
 
 #pragma mark - Public Methods
 
-- (void)visible {
+- (void)show {
     self.parentView.hidden = NO;
     [self.parentView addSubview:self];
 }
 
-- (void)disVisible {
+- (void)hide {
     self.parentView.hidden = YES;
     [self removeFromSuperview];
+}
+
+- (void)visible {
+    [self show];
+}
+
+- (void)disVisible {
+    [self hide];
 }
 
 - (void)autoEdgeRetractDuration:(NSTimeInterval)duration edgeRetractConfigHander:(MISEdgeRetractConfig (^)())edgeRetractConfigHander {
