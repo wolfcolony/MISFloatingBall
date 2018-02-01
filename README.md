@@ -18,6 +18,14 @@ MISFloatingBall
 - [ ] 旋转适配
 
 ### 使用说明
+* 导入
+
+		pod 'MISFloatingBall'
+
+* 或者指定版本
+
+		pod 'MISFloatingBall', '1.0.0'
+
 * 初始化
 		
 		MISFloatingBall *floatingBall = [[MISFloatingBall alloc] initWithFrame:CGRectMake(100, 100, 100, 100)];// 全局作用
